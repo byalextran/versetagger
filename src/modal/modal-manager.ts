@@ -5,6 +5,7 @@
 
 import type { VersetaggerConfig } from '../core/config';
 import type { VerseContent } from '../api/youversion-client';
+import { injectModalStyles, removeModalStyles } from './modal-styles';
 
 export type ModalState = 'hidden' | 'loading' | 'loaded' | 'error';
 
@@ -35,6 +36,7 @@ export class ModalManager {
    */
   initialize(renderCallback: (container: HTMLElement, content: VerseContent) => void): void {
     this.renderCallback = renderCallback;
+    injectModalStyles();
     this.createModalContainer();
     this.attachGlobalListeners();
   }
@@ -143,6 +145,9 @@ export class ModalManager {
     // Store focus before opening modal
     this.focusBeforeModal = document.activeElement as HTMLElement;
 
+    // Prevent body scroll on mobile
+    document.body.classList.add('versetagger-modal-open');
+
     this.currentTarget = targetElement;
     this.currentState = 'loading';
 
@@ -232,6 +237,9 @@ export class ModalManager {
 
     this.currentState = 'hidden';
     this.modalElement.classList.remove('versetagger-modal-visible');
+
+    // Re-enable body scroll
+    document.body.classList.remove('versetagger-modal-open');
 
     // Wait for transition to complete before hiding
     setTimeout(() => {
@@ -371,6 +379,10 @@ export class ModalManager {
       this.modalElement = null;
       this.containerElement = null;
     }
+    // Re-enable body scroll
+    document.body.classList.remove('versetagger-modal-open');
+    // Remove injected styles
+    removeModalStyles();
     this.currentTarget = null;
     this.currentState = 'hidden';
     this.renderCallback = null;
