@@ -7,7 +7,7 @@ const isDev = args.includes('--dev');
 const isWatch = args.includes('--watch');
 
 const commonOptions = {
-  entryPoints: ['src/core/VerseTagger.ts'],
+  entryPoints: ['src/index.ts'],
   bundle: true,
   sourcemap: isDev,
   minify: !isDev,
@@ -22,13 +22,24 @@ async function build() {
     }
 
     // Build UMD bundle for browsers/CDN
+    // Uses IIFE format with UMD-style fallback for CommonJS
     await esbuild.build({
       ...commonOptions,
       outfile: 'dist/versetagger.js',
       format: 'iife',
       globalName: 'VerseTagger',
       footer: {
-        js: 'if (typeof module !== "undefined" && module.exports) { module.exports = VerseTagger; }'
+        js: `
+// UMD-style export for compatibility
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = VerseTagger;
+  module.exports.default = VerseTagger;
+  module.exports.VerseTagger = VerseTagger;
+}
+if (typeof define === "function" && define.amd) {
+  define([], function() { return VerseTagger; });
+}
+`.trim()
       }
     });
 
@@ -47,11 +58,24 @@ async function build() {
 }
 
 if (isWatch) {
-  const ctx = esbuild.context({
+  esbuild.context({
     ...commonOptions,
     outfile: 'dist/versetagger.js',
     format: 'iife',
     globalName: 'VerseTagger',
+    footer: {
+      js: `
+// UMD-style export for compatibility
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = VerseTagger;
+  module.exports.default = VerseTagger;
+  module.exports.VerseTagger = VerseTagger;
+}
+if (typeof define === "function" && define.amd) {
+  define([], function() { return VerseTagger; });
+}
+`.trim()
+    }
   }).then(ctx => {
     ctx.watch();
     console.log('👀 Watching for changes...');
