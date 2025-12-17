@@ -22,6 +22,8 @@
 interface Env {
   /** YouVersion API key (stored as a secret) */
   YOUVERSION_API_KEY: string;
+  /** YouVersion API base URL (configured per environment) */
+  YOUVERSION_API_BASE_URL: string;
 }
 
 /**
@@ -83,7 +85,7 @@ export default {
       }
 
       // Fetch from YouVersion API
-      const verseData = await fetchFromYouVersion(params, env.YOUVERSION_API_KEY);
+      const verseData = await fetchFromYouVersion(params, env);
 
       return jsonResponse(verseData, {
         headers: CORS_HEADERS
@@ -130,12 +132,11 @@ async function fetchFromYouVersion(
     verses: string | null;
     version: string;
   },
-  apiKey: string
+  env: Env
 ): Promise<any> {
   // Build YouVersion API URL
   // Note: This is a placeholder. You'll need to adjust based on actual YouVersion API endpoints
   // The actual API endpoint structure depends on YouVersion's API documentation
-  const baseUrl = 'https://developers.youversion.com/api/v1';
 
   // Construct the API request URL based on YouVersion's actual API structure
   // This is an example format - adjust according to actual API docs
@@ -143,13 +144,13 @@ async function fetchFromYouVersion(
     ? `${params.book}.${params.chapter}.${params.verses}`
     : `${params.book}.${params.chapter}`;
 
-  const apiUrl = `${baseUrl}/verses?reference=${verseQuery}&version=${params.version}`;
+  const apiUrl = `${env.YOUVERSION_API_BASE_URL}/verses?reference=${verseQuery}&version=${params.version}`;
 
   try {
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${env.YOUVERSION_API_KEY}`,
         'Accept': 'application/json',
         'User-Agent': 'VerseTagger-Proxy/1.0'
       }
