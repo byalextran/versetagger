@@ -4,3 +4,8 @@ dist/
 .DS_Store
 .env
 *.tgz
+
+# Cloudflare Workers
+.wrangler/
+.dev.vars
+wrangler.toml.local

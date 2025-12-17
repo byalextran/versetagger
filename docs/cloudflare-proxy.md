@@ -1,100 +1,182 @@
-# Cloudflare Proxy Setup Guide
+# Cloudflare Worker Proxy for VerseTagger
 
-This guide will walk you through setting up a Cloudflare Worker proxy for VerseTagger. The proxy securely handles API requests to YouVersion, keeping your API key safe from client-side exposure.
+This Cloudflare Worker acts as a secure proxy between your website and the YouVersion API, protecting your API key from being exposed in client-side code.
 
-## Why a Proxy?
+## Features
 
-VerseTagger requires a server-side proxy for security:
-
-1. **API Key Protection**: Your YouVersion API key never gets exposed in browser code
-2. **CORS Support**: Handles cross-origin requests properly
-3. **Rate Limiting**: You can implement your own rate limiting
-4. **Caching**: Optional caching to improve performance and reduce API calls
-5. **Request Validation**: Validate and sanitize requests before hitting the API
+- ✅ Secure API key storage (never exposed to browser)
+- ✅ CORS support for browser requests
+- ✅ Optional KV caching for better performance
+- ✅ Error handling and validation
+- ✅ Rate limit protection
 
 ## Prerequisites
 
-Before you begin, you'll need:
+1. **Cloudflare Account**: Sign up at [Cloudflare Workers](https://workers.cloudflare.com/)
+2. **YouVersion API Key**: Get one from [YouVersion Developers](https://developers.youversion.com/)
+3. **Wrangler CLI**: Install globally with `npm install -g wrangler`
 
-1. **Cloudflare Account** (free tier is fine)
-   - Sign up at [cloudflare.com](https://cloudflare.com)
-   - No credit card required for Workers free tier
+## Setup Instructions
 
-2. **YouVersion API Key**
-   - Get one at [developers.youversion.com](https://developers.youversion.com)
-   - Follow their registration process
+### 1. Configure the worker
 
-3. **Wrangler CLI** (Cloudflare's deployment tool)
-   ```bash
-   npm install -g wrangler
-   ```
-
-## Quick Setup (5 Minutes)
-
-### Step 1: Get the Worker Code
-
-Copy the example worker from the VerseTagger repository:
-
-```bash
-# If you installed via npm
-cp -r node_modules/versetagger/examples/cloudflare-worker ./my-versetagger-proxy
-cd my-versetagger-proxy
-```
-
-Or download from GitHub:
-- [worker.ts](https://github.com/yourusername/versetagger/blob/main/examples/cloudflare-worker/worker.ts)
-- [wrangler.toml](https://github.com/yourusername/versetagger/blob/main/examples/cloudflare-worker/wrangler.toml)
-
-### Step 2: Configure the Worker
-
-Edit `wrangler.toml` and set your worker name:
+Edit `wrangler.toml` to set your worker name:
 
 ```toml
-name = "my-versetagger-proxy"  # Change this to your preferred name
-main = "worker.ts"
-compatibility_date = "2024-01-01"
+name = "my-versetagger-proxy"  # Change this to your desired worker name
 ```
 
-### Step 3: Authenticate with Cloudflare
+### 2. Authenticate with Cloudflare
 
 ```bash
 wrangler login
 ```
 
-This opens your browser to authenticate. You'll need to allow Wrangler to access your Cloudflare account.
+This will open your browser to authenticate.
 
-### Step 4: Set Your API Key
-
-Store your YouVersion API key as a secret (it won't be visible in code):
+### 3. Set your YouVersion API key
 
 ```bash
 wrangler secret put YOUVERSION_API_KEY
+# Enter your API key when prompted
 ```
 
-When prompted, paste your YouVersion API key and press Enter.
+### 4. Deploy the worker
 
-### Step 5: Deploy
+You can use the npm scripts:
+
+```bash
+# Test locally first
+npm run worker:dev
+
+# Deploy to production
+npm run worker:deploy
+```
+
+Or use wrangler directly:
 
 ```bash
 wrangler deploy
 ```
 
-You'll get a URL like:
+After deployment, you'll get a URL like:
 ```
 https://my-versetagger-proxy.your-subdomain.workers.dev
 ```
 
-**Save this URL** - you'll use it in your VerseTagger configuration!
-
-### Step 6: Test It
+### 5. Test the deployment
 
 ```bash
 curl "https://my-versetagger-proxy.your-subdomain.workers.dev?book=JHN&chapter=3&verses=16&version=NIV"
 ```
 
-You should see a JSON response with verse content.
+You should get a JSON response with the verse content.
 
-### Step 7: Use in VerseTagger
+## Configuration: Secrets vs Environment Variables
+
+### Secrets (Sensitive Data)
+**Use:** `wrangler secret put` command
+**For:** API keys, passwords, tokens, database credentials
+
+Secrets are:
+- ✅ Encrypted at rest
+- ✅ Never stored in your repository
+- ✅ Cannot be read back (only overwritten)
+- ✅ Environment-specific
+
+```bash
+# Set secret for default environment
+wrangler secret put YOUVERSION_API_KEY
+
+# Set secret for production environment
+wrangler secret put YOUVERSION_API_KEY --env production
+
+# List secrets (shows names only, not values)
+wrangler secret list
+```
+
+### Environment Variables (Non-Sensitive)
+**Use:** `wrangler.toml` `[vars]` section
+**For:** URLs, timeouts, feature flags, public configuration
+
+```toml
+# Non-sensitive environment variables (safe to commit)
+[vars]
+API_BASE_URL = "https://developers.youversion.com/api/v1"
+CACHE_TTL = "3600"
+CORS_ORIGIN = "*"
+DEBUG = "false"
+```
+
+### Multiple Environments
+
+Use named environments for dev/staging/production configurations:
+
+```toml
+# Development environment
+[env.dev]
+name = "versetagger-proxy-dev"
+vars = { CACHE_TTL = "60", DEBUG = "true" }
+
+# Production environment
+[env.production]
+name = "versetagger-proxy-production"
+vars = { CACHE_TTL = "3600", DEBUG = "false" }
+routes = [
+  { pattern = "api.yourdomain.com/verses", zone_name = "yourdomain.com" }
+]
+```
+
+Deploy to specific environments:
+
+```bash
+# Deploy to development
+wrangler deploy --env dev
+
+# Deploy to production
+wrangler deploy --env production
+
+# Set secrets per environment
+wrangler secret put YOUVERSION_API_KEY --env production
+```
+
+**Rule of Thumb:**
+- 🔒 **Secrets**: Anything you wouldn't commit to GitHub
+- 📝 **Vars**: Configuration that's safe to share publicly
+
+## Optional: Enable KV Caching
+
+For better performance, enable Cloudflare KV to cache verse responses:
+
+### 1. Create a KV namespace
+
+```bash
+wrangler kv:namespace create "VERSE_CACHE"
+wrangler kv:namespace create "VERSE_CACHE" --preview
+```
+
+### 2. Update wrangler.toml
+
+Uncomment and update the KV bindings section with the IDs from the previous step:
+
+```toml
+[[kv_namespaces]]
+binding = "VERSE_CACHE"
+id = "abc123..."              # Your production namespace ID
+preview_id = "xyz789..."      # Your preview namespace ID
+```
+
+### 3. Redeploy
+
+```bash
+wrangler deploy
+```
+
+Now verse responses will be cached for 1 hour, reducing API calls and improving response times.
+
+## Usage in VerseTagger
+
+Once deployed, use your worker URL in the VerseTagger configuration:
 
 ```javascript
 const versetagger = new VerseTagger({
@@ -102,221 +184,22 @@ const versetagger = new VerseTagger({
 });
 ```
 
-That's it! Your proxy is live and VerseTagger can now fetch verses.
+## API Endpoint
 
-## Advanced Setup
+### GET /?book=BOOK&chapter=CHAPTER&verses=VERSES&version=VERSION
 
-### Enable Caching with Cloudflare KV
+**Query Parameters:**
+- `book` (required): Book code (e.g., "GEN", "JHN", "MAT")
+- `chapter` (required): Chapter number
+- `verses` (optional): Comma-separated verse numbers (e.g., "16" or "1,2,3")
+- `version` (optional): Bible version (default: "NIV")
 
-Cloudflare KV (Key-Value storage) can cache verse responses, reducing API calls and improving performance.
-
-#### 1. Create a KV Namespace
-
-```bash
-# Create production namespace
-wrangler kv:namespace create "VERSE_CACHE"
-
-# Create preview namespace (for testing)
-wrangler kv:namespace create "VERSE_CACHE" --preview
+**Example:**
+```
+GET /?book=JHN&chapter=3&verses=16&version=NIV
 ```
 
-You'll get output like:
-```
-{ binding = "VERSE_CACHE", id = "abc123..." }
-{ binding = "VERSE_CACHE", preview_id = "xyz789..." }
-```
-
-#### 2. Update wrangler.toml
-
-Add the KV binding to your `wrangler.toml`:
-
-```toml
-name = "my-versetagger-proxy"
-main = "worker.ts"
-compatibility_date = "2024-01-01"
-
-[[kv_namespaces]]
-binding = "VERSE_CACHE"
-id = "abc123..."              # Your production ID from step 1
-preview_id = "xyz789..."      # Your preview ID from step 1
-```
-
-#### 3. Update worker.ts
-
-Add KV caching to your worker. Update the `Env` interface:
-
-```typescript
-interface Env {
-  YOUVERSION_API_KEY: string;
-  VERSE_CACHE: KVNamespace;  // Add this line
-}
-```
-
-Add caching logic to the fetch handler:
-
-```typescript
-// Before fetching from YouVersion API, check cache
-const cacheKey = `${params.book}_${params.chapter}_${params.verses}_${params.version}`;
-
-if (env.VERSE_CACHE) {
-  const cached = await env.VERSE_CACHE.get(cacheKey);
-  if (cached) {
-    return jsonResponse(JSON.parse(cached), { headers: CORS_HEADERS });
-  }
-}
-
-// Fetch from API
-const verseData = await fetchFromYouVersion(params, env.YOUVERSION_API_KEY);
-
-// Cache the result (1 hour TTL)
-if (env.VERSE_CACHE) {
-  await env.VERSE_CACHE.put(cacheKey, JSON.stringify(verseData), {
-    expirationTtl: 3600  // 1 hour
-  });
-}
-
-return jsonResponse(verseData, { headers: CORS_HEADERS });
-```
-
-#### 4. Redeploy
-
-```bash
-wrangler deploy
-```
-
-Now verse responses will be cached for 1 hour, dramatically reducing API calls!
-
-### Custom Domain Setup
-
-Instead of using the `*.workers.dev` domain, you can use your own domain.
-
-#### Prerequisites
-- A domain registered with Cloudflare (or transferred to Cloudflare)
-
-#### Setup
-
-1. Add a route in `wrangler.toml`:
-
-```toml
-[env.production]
-routes = [
-  { pattern = "api.yourdomain.com/verses", zone_name = "yourdomain.com" }
-]
-```
-
-2. Deploy to production environment:
-
-```bash
-wrangler deploy --env production
-```
-
-3. Update your DNS in Cloudflare dashboard:
-   - Add a CNAME record for `api.yourdomain.com` pointing to your worker
-
-4. Use custom domain in VerseTagger:
-
-```javascript
-const versetagger = new VerseTagger({
-  proxyUrl: 'https://api.yourdomain.com/verses'
-});
-```
-
-### Rate Limiting
-
-Protect your proxy from abuse by adding rate limiting:
-
-```typescript
-// Add to your worker
-const RATE_LIMIT = 100;  // Requests per minute
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const record = rateLimitMap.get(ip);
-
-  if (!record || now > record.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + 60000 });
-    return true;
-  }
-
-  if (record.count >= RATE_LIMIT) {
-    return false;
-  }
-
-  record.count++;
-  return true;
-}
-
-// In your fetch handler
-const clientIp = request.headers.get('CF-Connecting-IP') || 'unknown';
-if (!checkRateLimit(clientIp)) {
-  return jsonResponse(
-    { error: 'Rate limit exceeded' },
-    { status: 429, headers: CORS_HEADERS }
-  );
-}
-```
-
-### Restricting Origins
-
-For production, restrict which domains can use your proxy:
-
-```typescript
-const ALLOWED_ORIGINS = [
-  'https://yourdomain.com',
-  'https://www.yourdomain.com'
-];
-
-function getCorsHeaders(origin: string | null): HeadersInit {
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
-    return {
-      'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    };
-  }
-
-  // Reject requests from unknown origins
-  return {};
-}
-
-// In your fetch handler
-const origin = request.headers.get('Origin');
-const corsHeaders = getCorsHeaders(origin);
-
-if (Object.keys(corsHeaders).length === 0) {
-  return new Response('Forbidden', { status: 403 });
-}
-```
-
-## API Endpoint Reference
-
-Your proxy accepts GET requests with these parameters:
-
-### Request Parameters
-
-| Parameter | Type   | Required | Description                     | Example      |
-|-----------|--------|----------|---------------------------------|--------------|
-| `book`    | string | Yes      | Book code (see book mappings)   | `JHN`        |
-| `chapter` | number | Yes      | Chapter number                  | `3`          |
-| `verses`  | string | No       | Comma-separated verse numbers   | `16` or `1,2,3` |
-| `version` | string | No       | Bible version (default: NIV)    | `ESV`        |
-
-### Example Requests
-
-```bash
-# Single verse
-curl "https://your-proxy.workers.dev?book=JHN&chapter=3&verses=16&version=NIV"
-
-# Multiple verses
-curl "https://your-proxy.workers.dev?book=ROM&chapter=8&verses=28,29,30&version=ESV"
-
-# Entire chapter
-curl "https://your-proxy.workers.dev?book=PSA&chapter=23&version=NIV"
-```
-
-### Response Format
-
+**Response:**
 ```json
 {
   "verses": [
@@ -330,160 +213,70 @@ curl "https://your-proxy.workers.dev?book=PSA&chapter=23&version=NIV"
 }
 ```
 
-### Error Responses
+## Important Notes
 
-```json
-{
-  "error": "Missing required parameters: book and chapter are required"
-}
+⚠️ **API Key Security**: Never commit your API key to version control. Always use Wrangler secrets.
+
+⚠️ **YouVersion API**: This example includes placeholder code. You must update `worker.ts` to match the actual YouVersion API endpoints and response format based on their official documentation.
+
+⚠️ **CORS Configuration**: The worker allows requests from any origin (`*`). For production, consider restricting this to your specific domains.
+
+⚠️ **Rate Limiting**: The YouVersion API may have rate limits. Consider implementing additional rate limiting in the worker if needed.
+
+## Custom Domain (Optional)
+
+To use a custom domain instead of the workers.dev URL:
+
+1. Add a route in `wrangler.toml`:
+```toml
+[env.production]
+routes = [
+  { pattern = "api.yourdomain.com/verses", zone_name = "yourdomain.com" }
+]
 ```
 
-Status codes:
-- `400` - Bad request (missing parameters)
-- `404` - Verse not found
-- `429` - Rate limit exceeded
-- `500` - Server error
-- `502` - YouVersion API error
+2. Set up DNS in Cloudflare dashboard to point to your worker
 
-## Monitoring and Debugging
-
-### View Logs
-
-```bash
-# Stream live logs
-wrangler tail
-
-# View recent logs in dashboard
-# Visit: https://dash.cloudflare.com → Workers & Pages → Your Worker → Logs
-```
-
-### Test Locally
-
-```bash
-# Run worker locally
-wrangler dev
-
-# Test locally
-curl "http://localhost:8787?book=JHN&chapter=3&verses=16&version=NIV"
-```
-
-### Analytics
-
-View usage analytics in Cloudflare dashboard:
-- Requests per second
-- Success rate
-- Error rate
-- Geographic distribution
+3. Deploy: `wrangler deploy --env production`
 
 ## Troubleshooting
 
 ### "API authentication failed"
-
-**Cause:** API key not set or invalid
-
-**Solution:**
-```bash
-# Check if secret is set
-wrangler secret list
-
-# Update the secret
-wrangler secret put YOUVERSION_API_KEY
-```
+- Check that your API key is set correctly: `wrangler secret list`
+- Verify the API key is valid with YouVersion
 
 ### "CORS error" in browser
-
-**Cause:** CORS headers not configured properly
-
-**Solutions:**
-- Verify worker is deployed: `wrangler deploy`
-- Check worker URL is correct
-- Ensure CORS_HEADERS are returned in all responses
+- Make sure your worker is deployed and accessible
+- Check browser console for the specific CORS error
+- Verify the worker is returning CORS headers
 
 ### "Verse not found"
-
-**Cause:** Invalid reference or YouVersion API issue
-
-**Solutions:**
-- Verify book code is correct (see `src/parser/book-mappings.ts`)
-- Check chapter and verse exist in that book
+- Verify the book code is correct (see book-mappings.ts)
+- Check that the chapter and verse exist in that book
 - Try a different Bible version
-- Check YouVersion API status
 
-### "Rate limit exceeded"
+## Development
 
-**Cause:** Too many requests to YouVersion API
+To test locally, use the npm script:
 
-**Solutions:**
-- Implement KV caching (see Advanced Setup)
-- Add rate limiting to your worker
-- Upgrade your YouVersion API plan if needed
-
-### Worker not deploying
-
-**Cause:** Various configuration issues
-
-**Solutions:**
 ```bash
-# Check for syntax errors
-wrangler deploy --dry-run
-
-# Verify wrangler.toml is valid
-cat wrangler.toml
-
-# Ensure you're logged in
-wrangler whoami
+npm run worker:dev
 ```
 
-## Security Best Practices
+Or run wrangler directly:
 
-1. **Never commit API keys** - Always use `wrangler secret put`
-2. **Restrict origins** - Don't use `Access-Control-Allow-Origin: *` in production
-3. **Implement rate limiting** - Protect against abuse
-4. **Monitor usage** - Set up alerts for unusual activity
-5. **Use HTTPS only** - Workers automatically use HTTPS
-6. **Validate input** - Sanitize all query parameters
-7. **Keep dependencies updated** - Regularly update worker code
+```bash
+wrangler dev
+```
 
-## Cost
+This starts a local server at `http://localhost:8787`
 
-Cloudflare Workers free tier includes:
-- 100,000 requests per day
-- 10ms CPU time per request
-- KV: 100,000 reads/day, 1,000 writes/day
+To view live logs from your deployed worker:
 
-This is usually sufficient for small to medium sites. For higher traffic:
-- Workers Paid: $5/month for 10M requests
-- See [Cloudflare pricing](https://workers.cloudflare.com/pricing)
+```bash
+npm run worker:tail
+```
 
-## Alternative Proxy Options
+## License
 
-While we recommend Cloudflare Workers, you can use other platforms:
-
-### Vercel Edge Functions
-- Similar to Workers
-- Good integration with Next.js
-- Free tier: 100GB bandwidth
-
-### AWS Lambda
-- More complex setup
-- Pay per request
-- Requires API Gateway
-
-### Your Own Server
-- Node.js, Python, PHP, etc.
-- Full control
-- Requires server management
-
-See the worker code for implementation examples that can be adapted to any platform.
-
-## Next Steps
-
-- [Getting Started Guide](./getting-started.md) - Integrate VerseTagger
-- [Configuration Guide](./configuration.md) - Configure VerseTagger
-- [API Reference](./api-reference.md) - VerseTagger API docs
-
-## Support
-
-- [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
-- [Wrangler CLI Docs](https://developers.cloudflare.com/workers/wrangler/)
-- [GitHub Issues](https://github.com/yourusername/versetagger/issues)
+This example is provided under the MIT License, same as VerseTagger.

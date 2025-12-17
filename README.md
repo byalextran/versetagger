@@ -212,11 +212,39 @@ VerseTagger supports all modern browsers:
 
 Requires ES2017+ support.
 
+## Cloudflare Workers Support
+
+VerseTagger includes built-in support for deploying to Cloudflare Workers directly from the project root. The worker acts as a secure proxy between your website and the YouVersion API.
+
+### Quick Deploy
+
+```bash
+# Authenticate with Cloudflare
+wrangler login
+
+# Set your YouVersion API key
+wrangler secret put YOUVERSION_API_KEY
+
+# Deploy the worker
+npm run worker:deploy
+```
+
+### Development
+
+```bash
+# Test locally
+npm run worker:dev
+
+# View live logs
+npm run worker:tail
+```
+
+See [Cloudflare Proxy Setup Guide](./docs/cloudflare-proxy.md) for complete instructions.
+
 ## Examples
 
 - [Basic Usage](./examples/basic.html) - Simple integration example
 - [Custom Theme](./examples/custom-theme.html) - Custom theme example
-- [Cloudflare Worker Proxy](./examples/cloudflare-worker/) - Proxy server example
 
 ## Documentation
 

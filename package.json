@@ -13,7 +13,10 @@
     "build": "node build.js",
     "dev": "node build.js --dev",
     "watch": "node build.js --watch",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "worker:dev": "wrangler dev",
+    "worker:deploy": "wrangler deploy",
+    "worker:tail": "wrangler tail"
   },
   "keywords": [
     "bible",
