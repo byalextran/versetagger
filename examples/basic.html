@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VerseTagger - Basic Example</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #333;
+    }
+
+    header {
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #111827;
+      margin: 0;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-top: 5px;
+    }
+
+    article {
+      background: #f9fafb;
+      padding: 30px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    article h2 {
+      color: #1f2937;
+      margin-top: 0;
+    }
+
+    article p {
+      margin-bottom: 15px;
+    }
+
+    .info-box {
+      background: #dbeafe;
+      border-left: 4px solid #3b82f6;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .info-box p {
+      margin: 0;
+    }
+
+    footer {
+      border-top: 2px solid #e5e7eb;
+      padding-top: 20px;
+      margin-top: 40px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    code {
+      background: #e5e7eb;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+    }
+
+    .config-display {
+      background: #1f2937;
+      color: #f9fafb;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>VerseTagger Basic Example</h1>
+    <p class="subtitle">Simple integration with default configuration</p>
+  </header>
+
+  <div class="info-box">
+    <p>
+      <strong>Note:</strong> This example requires a proxy server to be configured.
+      Replace the <code>proxyUrl</code> in the script below with your actual proxy URL.
+      See the <a href="../docs/cloudflare-proxy.md">Cloudflare Proxy Setup Guide</a> for instructions.
+    </p>
+  </div>
+
+  <article>
+    <h2>What is VerseTagger?</h2>
+    <p>
+      VerseTagger automatically detects Bible references in your web pages and displays
+      verse content in elegant modals. Simply hover over any scripture reference to see
+      the verse text!
+    </p>
+
+    <h2>Try It Out</h2>
+    <p>
+      Hover over these scripture references to see VerseTagger in action:
+    </p>
+
+    <p>
+      One of the most well-known verses is John 3:16, which speaks of God's love for the world.
+      Another powerful passage is Romans 8:28, which reminds us that all things work together
+      for good. The promise in Jeremiah 29:11 gives us hope for the future.
+    </p>
+
+    <p>
+      The Psalms offer comfort and praise, like Psalm 23 which speaks of the Lord as our shepherd.
+      Reading Matthew 5:1-12 gives us the Beatitudes. And the wisdom of Proverbs 3:5-6 ESV
+      teaches us to trust in the Lord.
+    </p>
+
+    <p>
+      The New Testament epistles are also rich with teaching. Consider 1 Corinthians 13:4-8 on love,
+      Ephesians 2:8-9 on grace, and Philippians 4:6-7 on peace. The book of James 1:2-4
+      encourages us through trials.
+    </p>
+
+    <h2>Supported Formats</h2>
+    <p>VerseTagger recognizes various reference formats:</p>
+    <ul>
+      <li>Simple references: Gen 1:1, Psalm 23, Rev 21:1</li>
+      <li>Verse ranges: Romans 8:1-4, Matthew 5:3-10</li>
+      <li>Books with numbers: 1 John 4:8, 2 Timothy 3:16-17</li>
+      <li>Version suffixes: John 1:1 ESV, Psalm 119:105 NIV</li>
+      <li>Abbreviations: Matt 6:33, Gen 1:1, Ps 119:11</li>
+    </ul>
+  </article>
+
+  <article>
+    <h2>How It Works</h2>
+    <p>
+      VerseTagger is initialized with a simple configuration. Here's what we're using
+      for this example:
+    </p>
+
+    <div class="config-display">const versetagger = new VerseTagger({
+  proxyUrl: 'https://your-proxy.workers.dev',
+  trigger: 'hover',      // Show modal on hover
+  colorScheme: 'auto',   // Auto-detect light/dark mode
+  defaultVersion: 'NIV', // Default Bible version
+  autoScan: true         // Automatically scan on load
+});</div>
+
+    <p>
+      That's all the JavaScript you need! VerseTagger automatically:
+    </p>
+    <ul>
+      <li>Scans your page for scripture references</li>
+      <li>Converts them to interactive elements</li>
+      <li>Fetches verse content from the API</li>
+      <li>Displays it in a beautiful, accessible modal</li>
+      <li>Adapts to your user's color scheme preference</li>
+    </ul>
+  </article>
+
+  <article>
+    <h2>Next Steps</h2>
+    <p>
+      Explore more advanced features:
+    </p>
+    <ul>
+      <li>See <a href="custom-theme.html">custom-theme.html</a> for theming examples</li>
+      <li>Read the <a href="../docs/configuration.md">Configuration Guide</a> for all options</li>
+      <li>Check out the <a href="../docs/theming.md">Theming Guide</a> for customization</li>
+      <li>Review the <a href="../docs/api-reference.md">API Reference</a> for methods</li>
+    </ul>
+  </article>
+
+  <footer>
+    <p>
+      VerseTagger v0.1.0 &middot;
+      <a href="https://github.com/yourusername/versetagger">GitHub</a> &middot;
+      <a href="../docs/getting-started.md">Documentation</a>
+    </p>
+    <p style="margin-top: 10px;">
+      Verse content provided by <a href="https://www.youversion.com/">YouVersion</a>
+    </p>
+  </footer>
+
+  <!-- Load VerseTagger from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/versetagger@latest/dist/versetagger.js"></script>
+
+  <!-- Initialize VerseTagger -->
+  <script>
+    // IMPORTANT: Replace this URL with your actual proxy URL
+    // See docs/cloudflare-proxy.md for setup instructions
+    const PROXY_URL = 'https://your-proxy.workers.dev';
+
+    try {
+      const versetagger = new VerseTagger({
+        proxyUrl: PROXY_URL,
+        trigger: 'hover',      // Show modal on hover
+        colorScheme: 'auto',   // Auto-detect light/dark mode
+        defaultVersion: 'NIV', // Default Bible version
+        autoScan: true,        // Automatically scan on load
+        debug: true            // Enable console logging (remove in production)
+      });
+
+      console.log('VerseTagger initialized successfully!');
+      console.log('Version:', VerseTagger.version);
+
+      // Optional: Log scanned references after a short delay
+      setTimeout(() => {
+        const references = versetagger.getScannedReferences();
+        console.log(`Found ${references.length} scripture references on this page`);
+      }, 1000);
+
+    } catch (error) {
+      console.error('Failed to initialize VerseTagger:', error.message);
+      console.error('Make sure you have set the PROXY_URL to your actual proxy server');
+    }
+  </script>
+</body>
+</html>
