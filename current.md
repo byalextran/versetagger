@@ -64,59 +64,6 @@ versetagger/
 
 ## Implementation Phases
 
-### Phase 5: Theming System
-**Goal**: Support light/dark modes with auto-detection and custom themes
-
-**Tasks**:
-1. Implement theme manager (`src/theming/theme-manager.ts`)
-   - Define 2 hardcoded themes in TypeScript (light and dark)
-   - Validate custom theme objects
-   - Apply themes via CSS custom properties
-   - Auto-detect color scheme (`prefers-color-scheme`)
-   - Runtime theme switching
-
-2. Create base modal CSS
-   - Use CSS variables for all colors, spacing, fonts
-   - Clean, minimal design
-   - Smooth transitions
-   - Responsive breakpoints
-
-3. Define preset themes (`src/theming/preset-themes.ts`)
-   - **Default Light**: High contrast, professional
-   - **Default Dark**: Dark mode, comfortable colors
-   - Hardcoded as TypeScript objects (not JSON files)
-
-4. Theme customization API
-   - Users can pass custom theme object
-   - Theme object validation
-
-**Critical Files**:
-- `src/theming/theme-manager.ts`
-- `src/theming/preset-themes.ts`
-
-### Phase 6: Main Entry Point & Orchestration
-**Goal**: Tie all modules together, expose public API
-
-**Tasks**:
-1. Implement main VerseTagger class (`src/core/VerseTagger.ts`)
-   - Initialize all modules with config
-   - Auto-scan on DOM ready (if configured)
-   - Setup theme (auto-detect or user-specified)
-   - Expose public API:
-     - `scan(element?)` - Scan specific element or whole page
-     - `rescan()` - Re-scan entire page
-     - `updateConfig(config)` - Update configuration
-     - `setTheme(themeObject | 'light' | 'dark')` - Change theme
-     - `destroy()` - Cleanup listeners, remove modals
-
-2. Export for multiple module systems
-   - UMD for browsers (global `window.VerseTagger`)
-   - ESM for bundlers
-   - Type definitions (.d.ts)
-
-**Critical Files**:
-- `src/core/VerseTagger.ts`
-
 ### Phase 7: Security & Performance
 **Goal**: Harden security, optimize performance
 
@@ -291,6 +238,38 @@ versetagger/
 
 ## Completed Phases
 
+### Phase 6: Main Entry Point & Orchestration ✅
+**Goal**: Tie all modules together, expose public API
+
+**Completed Tasks**:
+1. ✅ Implemented main VerseTagger class (`src/core/VerseTagger.ts`)
+   - Initializes all modules with config
+   - Auto-scans on DOM ready (if configured)
+   - Sets up theme (auto-detect or user-specified)
+   - Exposes complete public API:
+     - `scan(element?)` - Scan specific element or whole page
+     - `rescan()` - Re-scan entire page
+     - `updateConfig(config)` - Update configuration dynamically
+     - `setTheme(themeObject | 'light' | 'dark')` - Change theme at runtime
+     - `destroy()` - Cleanup listeners, remove modals
+     - `getConfig()` - Get current configuration
+     - `getScannedReferences()` - Get all scanned references
+     - `getCacheStats()` - Get cache statistics
+     - `clearCache()` - Clear verse cache
+   - Built-in caching system with cache keys
+   - Error handling for API failures
+
+2. ✅ Exported for multiple module systems
+   - UMD for browsers (global `window.VerseTagger`)
+   - ESM for bundlers (versetagger.esm.js)
+   - CommonJS support via module.exports
+   - AMD support via define()
+   - Full TypeScript type definitions exported
+
+**Files Created**:
+- `src/core/VerseTagger.ts` - Main orchestrator class
+- `src/index.ts` - Main entry point with all exports
+
 ### Phase 1: Foundation (Core Parsing & Configuration)
 **Goal**: Set up project structure, implement scripture reference parsing
 
@@ -400,3 +379,33 @@ versetagger/
 **Critical Files**:
 - `src/modal/modal-manager.ts`
 - `src/modal/modal-renderer.ts`
+
+### Phase 5: Theming System
+**Goal**: Support light/dark modes with auto-detection and custom themes
+
+**Tasks**:
+1. Implement theme manager (`src/theming/theme-manager.ts`)
+   - Define 2 hardcoded themes in TypeScript (light and dark)
+   - Validate custom theme objects
+   - Apply themes via CSS custom properties
+   - Auto-detect color scheme (`prefers-color-scheme`)
+   - Runtime theme switching
+
+2. Create base modal CSS
+   - Use CSS variables for all colors, spacing, fonts
+   - Clean, minimal design
+   - Smooth transitions
+   - Responsive breakpoints
+
+3. Define preset themes (`src/theming/preset-themes.ts`)
+   - **Default Light**: High contrast, professional
+   - **Default Dark**: Dark mode, comfortable colors
+   - Hardcoded as TypeScript objects (not JSON files)
+
+4. Theme customization API
+   - Users can pass custom theme object
+   - Theme object validation
+
+**Critical Files**:
+- `src/theming/theme-manager.ts`
+- `src/theming/preset-themes.ts`
