@@ -64,59 +64,6 @@ versetagger/
 
 ## Implementation Phases
 
-### Phase 3: DOM Scanner & Reference Enhancement
-**Goal**: Scan page for references, wrap them in interactive elements
-
-**Tasks**:
-1. Implement DOM scanner (`src/core/scanner.ts`)
-   - TreeWalker to find text nodes
-   - Exclude selectors (code, pre, script, style)
-   - Track scanned nodes with WeakSet
-   - Replace text with reference links/spans
-   - Add ARIA attributes for accessibility
-
-2. Implement event handler (`src/modal/event-handler.ts`)
-   - Attach hover/click/keyboard events to references
-   - Debounced hover with configurable delay (default 500ms)
-   - Keyboard navigation (Enter/Space to open)
-
-**Critical Files**:
-- `src/core/scanner.ts`
-- `src/modal/event-handler.ts`
-
-### Phase 4: Modal System
-**Goal**: Display verses in elegant, accessible modals
-
-**Tasks**:
-1. Implement modal manager (`src/modal/modal-manager.ts`)
-   - Create modal container outside main DOM
-   - Smart positioning algorithm:
-     - Prefer below target, fallback to above
-     - Prevent viewport overflow
-   - Loading states while fetching
-   - Error states for API failures
-   - Animate in/out (CSS transitions)
-   - Basic accessibility:
-     - Escape key to close
-     - ARIA labels and roles
-     - Restore focus on close
-     - Screen reader announcements
-
-2. Implement modal renderer (`src/modal/modal-renderer.ts`)
-   - Render verse content with verse numbers
-   - Sanitize HTML from API (XSS prevention)
-   - Link to YouVersion for full context
-   - Display version abbreviation
-
-3. Mobile responsiveness
-   - Touch-friendly close button
-   - Responsive CSS (same positioning algorithm for all devices)
-   - Prevent body scroll when open
-
-**Critical Files**:
-- `src/modal/modal-manager.ts`
-- `src/modal/modal-renderer.ts`
-
 ### Phase 5: Theming System
 **Goal**: Support light/dark modes with auto-detection and custom themes
 
@@ -400,3 +347,56 @@ versetagger/
 **Critical Files**:
 - `src/api/youversion-client.ts`
 - `examples/cloudflare-worker/worker.ts`
+
+### Phase 3: DOM Scanner & Reference Enhancement
+**Goal**: Scan page for references, wrap them in interactive elements
+
+**Tasks**:
+1. Implement DOM scanner (`src/core/scanner.ts`)
+   - TreeWalker to find text nodes
+   - Exclude selectors (code, pre, script, style)
+   - Track scanned nodes with WeakSet
+   - Replace text with reference links/spans
+   - Add ARIA attributes for accessibility
+
+2. Implement event handler (`src/modal/event-handler.ts`)
+   - Attach hover/click/keyboard events to references
+   - Debounced hover with configurable delay (default 500ms)
+   - Keyboard navigation (Enter/Space to open)
+
+**Critical Files**:
+- `src/core/scanner.ts`
+- `src/modal/event-handler.ts`
+
+### Phase 4: Modal System
+**Goal**: Display verses in elegant, accessible modals
+
+**Tasks**:
+1. Implement modal manager (`src/modal/modal-manager.ts`)
+   - Create modal container outside main DOM
+   - Smart positioning algorithm:
+     - Prefer below target, fallback to above
+     - Prevent viewport overflow
+   - Loading states while fetching
+   - Error states for API failures
+   - Animate in/out (CSS transitions)
+   - Basic accessibility:
+     - Escape key to close
+     - ARIA labels and roles
+     - Restore focus on close
+     - Screen reader announcements
+
+2. Implement modal renderer (`src/modal/modal-renderer.ts`)
+   - Render verse content with verse numbers
+   - Sanitize HTML from API (XSS prevention)
+   - Link to YouVersion for full context
+   - Display version abbreviation
+
+3. Mobile responsiveness
+   - Touch-friendly close button
+   - Responsive CSS (same positioning algorithm for all devices)
+   - Prevent body scroll when open
+
+**Critical Files**:
+- `src/modal/modal-manager.ts`
+- `src/modal/modal-renderer.ts`

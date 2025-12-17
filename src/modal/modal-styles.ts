@@ -1,6 +1,7 @@
 /**
  * Modal Styles
  * Base CSS for modal system with mobile responsiveness
+ * Uses CSS variables from the theming system (--vt-* prefix)
  */
 
 export const MODAL_BASE_STYLES = `
@@ -8,22 +9,23 @@ export const MODAL_BASE_STYLES = `
 .versetagger-modal {
   position: absolute;
   z-index: 999999;
-  background: var(--versetagger-modal-bg, #ffffff);
-  border: 1px solid var(--versetagger-modal-border, #e0e0e0);
-  border-radius: var(--versetagger-modal-radius, 8px);
-  box-shadow: var(--versetagger-modal-shadow, 0 4px 20px rgba(0, 0, 0, 0.15));
-  max-width: var(--versetagger-modal-max-width, 500px);
-  min-width: var(--versetagger-modal-min-width, 280px);
-  width: var(--versetagger-modal-width, 90vw);
-  max-height: var(--versetagger-modal-max-height, 80vh);
+  background: var(--vt-modalBackground);
+  border: 1px solid var(--vt-modalBorder);
+  border-radius: var(--vt-modalBorderRadius);
+  box-shadow: 0 4px 6px -1px var(--vt-modalShadow), 0 2px 4px -1px var(--vt-modalShadow);
+  max-width: var(--vt-modalMaxWidth);
+  min-width: 280px;
+  width: 90vw;
+  max-height: 80vh;
   overflow-y: auto;
   opacity: 0;
   transform: translateY(-8px);
   transition: opacity 0.2s ease, transform 0.2s ease;
-  font-family: var(--versetagger-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
-  font-size: var(--versetagger-font-size, 16px);
-  line-height: var(--versetagger-line-height, 1.6);
-  color: var(--versetagger-text-color, #333333);
+  font-family: var(--vt-fontFamily);
+  font-size: var(--vt-fontSize);
+  line-height: var(--vt-lineHeight);
+  color: var(--vt-textPrimary);
+  padding: var(--vt-modalPadding);
 }
 
 /* Modal visible state */
@@ -43,7 +45,7 @@ export const MODAL_BASE_STYLES = `
 
 /* Modal Content Container */
 .versetagger-modal-content {
-  padding: var(--versetagger-modal-padding, 20px);
+  /* Padding now applied to .versetagger-modal */
 }
 
 /* Close Button */
@@ -51,11 +53,11 @@ export const MODAL_BASE_STYLES = `
   position: absolute;
   top: 12px;
   right: 12px;
-  background: transparent;
+  background: var(--vt-closeButtonBackground);
   border: none;
   font-size: 28px;
   line-height: 1;
-  color: var(--versetagger-close-color, #666666);
+  color: var(--vt-closeButtonColor);
   cursor: pointer;
   padding: 4px;
   width: 32px;
@@ -69,12 +71,12 @@ export const MODAL_BASE_STYLES = `
 }
 
 .versetagger-modal-close:hover {
-  background-color: var(--versetagger-close-hover-bg, #f0f0f0);
-  color: var(--versetagger-close-hover-color, #333333);
+  background-color: var(--vt-closeButtonHoverBackground);
+  color: var(--vt-closeButtonHoverColor);
 }
 
 .versetagger-modal-close:focus {
-  outline: 2px solid var(--versetagger-focus-color, #0066cc);
+  outline: 2px solid var(--vt-linkColor);
   outline-offset: 2px;
 }
 
@@ -91,9 +93,9 @@ export const MODAL_BASE_STYLES = `
 
 .versetagger-modal-reference {
   margin: 0;
-  font-size: var(--versetagger-reference-font-size, 18px);
-  font-weight: var(--versetagger-reference-font-weight, 600);
-  color: var(--versetagger-reference-color, #1a1a1a);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--vt-textPrimary);
   flex: 1;
   min-width: 0;
 }
@@ -101,11 +103,11 @@ export const MODAL_BASE_STYLES = `
 .versetagger-modal-version {
   display: inline-block;
   padding: 4px 10px;
-  background: var(--versetagger-version-bg, #f5f5f5);
-  color: var(--versetagger-version-color, #666666);
-  border-radius: var(--versetagger-version-radius, 4px);
-  font-size: var(--versetagger-version-font-size, 13px);
-  font-weight: var(--versetagger-version-font-weight, 500);
+  background: var(--vt-modalBorder);
+  color: var(--vt-textMuted);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
   white-space: nowrap;
 }
 
@@ -127,9 +129,9 @@ export const MODAL_BASE_STYLES = `
 
 .versetagger-verse-number {
   flex-shrink: 0;
-  font-weight: var(--versetagger-verse-number-weight, 700);
-  color: var(--versetagger-verse-number-color, #0066cc);
-  font-size: var(--versetagger-verse-number-size, 14px);
+  font-weight: 700;
+  color: var(--vt-verseNumberColor);
+  font-size: var(--vt-verseNumberSize);
   min-width: 24px;
   text-align: right;
   line-height: inherit;
@@ -137,13 +139,13 @@ export const MODAL_BASE_STYLES = `
 
 .versetagger-verse-text {
   flex: 1;
-  color: var(--versetagger-verse-text-color, #333333);
+  color: var(--vt-textSecondary);
 }
 
 /* Footer */
 .versetagger-modal-footer {
   padding-top: 12px;
-  border-top: 1px solid var(--versetagger-footer-border, #e0e0e0);
+  border-top: 1px solid var(--vt-modalBorder);
   display: flex;
   justify-content: flex-end;
 }
@@ -151,20 +153,20 @@ export const MODAL_BASE_STYLES = `
 .versetagger-youversion-link {
   display: inline-flex;
   align-items: center;
-  color: var(--versetagger-link-color, #0066cc);
+  color: var(--vt-linkColor);
   text-decoration: none;
-  font-size: var(--versetagger-link-font-size, 14px);
-  font-weight: var(--versetagger-link-font-weight, 500);
+  font-size: 14px;
+  font-weight: 500;
   transition: color 0.2s ease;
 }
 
 .versetagger-youversion-link:hover {
-  color: var(--versetagger-link-hover-color, #0052a3);
+  color: var(--vt-linkHoverColor);
   text-decoration: underline;
 }
 
 .versetagger-youversion-link:focus {
-  outline: 2px solid var(--versetagger-focus-color, #0066cc);
+  outline: 2px solid var(--vt-linkColor);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -187,8 +189,8 @@ export const MODAL_BASE_STYLES = `
 .versetagger-spinner {
   width: 32px;
   height: 32px;
-  border: 3px solid var(--versetagger-spinner-bg, #e0e0e0);
-  border-top-color: var(--versetagger-spinner-color, #0066cc);
+  border: 3px solid var(--vt-modalBorder);
+  border-top-color: var(--vt-loadingColor);
   border-radius: 50%;
   animation: versetagger-spin 0.8s linear infinite;
 }
@@ -205,19 +207,20 @@ export const MODAL_BASE_STYLES = `
   align-items: flex-start;
   gap: 12px;
   padding: 16px;
-  background: var(--versetagger-error-bg, #fff3f3);
-  border: 1px solid var(--versetagger-error-border, #ffcccc);
+  background: var(--vt-errorBackground);
+  border: 1px solid var(--vt-modalBorder);
   border-radius: 6px;
 }
 
 .versetagger-error-icon {
   font-size: 20px;
   flex-shrink: 0;
+  color: var(--vt-errorText);
 }
 
 .versetagger-error-message {
   margin: 0;
-  color: var(--versetagger-error-color, #cc0000);
+  color: var(--vt-errorText);
   font-size: 14px;
   line-height: 1.5;
 }
@@ -323,33 +326,7 @@ body.versetagger-modal-open {
 
   .versetagger-spinner {
     animation: none;
-    border-top-color: var(--versetagger-spinner-bg, #e0e0e0);
-  }
-}
-
-/* Dark mode support (will be enhanced by theme system in Phase 5) */
-@media (prefers-color-scheme: dark) {
-  .versetagger-modal {
-    --versetagger-modal-bg: #1e1e1e;
-    --versetagger-modal-border: #404040;
-    --versetagger-modal-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    --versetagger-text-color: #e0e0e0;
-    --versetagger-reference-color: #ffffff;
-    --versetagger-version-bg: #2a2a2a;
-    --versetagger-version-color: #b0b0b0;
-    --versetagger-verse-number-color: #4da6ff;
-    --versetagger-verse-text-color: #e0e0e0;
-    --versetagger-footer-border: #404040;
-    --versetagger-link-color: #4da6ff;
-    --versetagger-link-hover-color: #80c1ff;
-    --versetagger-close-color: #b0b0b0;
-    --versetagger-close-hover-bg: #2a2a2a;
-    --versetagger-close-hover-color: #ffffff;
-    --versetagger-spinner-bg: #404040;
-    --versetagger-spinner-color: #4da6ff;
-    --versetagger-error-bg: #2a1a1a;
-    --versetagger-error-border: #663333;
-    --versetagger-error-color: #ff6b6b;
+    border-top-color: var(--vt-modalBorder);
   }
 }
 `;

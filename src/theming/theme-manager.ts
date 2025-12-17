@@ -6,7 +6,7 @@
 import type { Theme, ThemeColors, ThemeSpacing, ThemeFonts } from './preset-themes';
 import { getPresetTheme } from './preset-themes';
 import { injectThemeVariables, injectBaseStyles, hasBaseStyles } from './css-injector';
-import { baseStyles } from './base-styles';
+import { MODAL_BASE_STYLES } from '../modal/modal-styles';
 
 export type ThemeMode = 'light' | 'dark' | 'auto';
 
@@ -42,7 +42,7 @@ export class ThemeManager {
   public init(): void {
     // Inject base styles if not already present
     if (!hasBaseStyles()) {
-      injectBaseStyles(baseStyles);
+      injectBaseStyles(MODAL_BASE_STYLES);
     }
 
     // Apply the current theme
