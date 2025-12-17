@@ -1,14 +1,32 @@
 /**
  * HTML Sanitizer
  * XSS prevention utilities for safe rendering of API content
+ * CSP-compliant: no inline scripts, no eval, no dangerous protocols
  */
+
+/**
+ * List of allowed HTML tags for verse content
+ * Only formatting tags that are safe and commonly used in scripture text
+ */
+const ALLOWED_TAGS = new Set([
+  'p', 'br', 'span', 'div', 'strong', 'em', 'b', 'i', 'sup', 'sub'
+]);
+
+/**
+ * List of allowed attributes for HTML elements
+ * Only safe attributes that don't execute code
+ */
+const ALLOWED_ATTRS = new Set([
+  'class', 'id', 'title', 'lang', 'dir'
+]);
 
 /**
  * Sanitize HTML content using DOMParser
  * Removes potentially dangerous elements and attributes
+ * CSP-compliant: no inline event handlers, no dangerous protocols
  */
 export function sanitizeHtml(html: string): string {
-  // Use DOMParser to parse HTML safely
+  // Use DOMParser to parse HTML safely (no code execution)
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
 
@@ -18,16 +36,29 @@ export function sanitizeHtml(html: string): string {
 
   // Remove potentially dangerous elements
   const dangerousElements = doc.querySelectorAll(
-    'iframe, object, embed, link, style, base, meta, form'
+    'iframe, object, embed, link, style, base, meta, form, input, textarea, button, select'
   );
   dangerousElements.forEach(el => el.remove());
 
   // Remove event handler attributes from all elements
   const allElements = doc.querySelectorAll('*');
   allElements.forEach(el => {
-    // Remove all on* attributes (onclick, onerror, etc.)
+    // Remove disallowed tags
+    if (!ALLOWED_TAGS.has(el.tagName.toLowerCase())) {
+      // Replace with text content only
+      const textNode = document.createTextNode(el.textContent || '');
+      el.parentNode?.replaceChild(textNode, el);
+      return;
+    }
+
+    // Remove all on* attributes (onclick, onerror, onload, etc.)
     Array.from(el.attributes).forEach(attr => {
       if (attr.name.startsWith('on')) {
+        el.removeAttribute(attr.name);
+      }
+
+      // Remove attributes not in allowed list
+      if (!ALLOWED_ATTRS.has(attr.name.toLowerCase())) {
         el.removeAttribute(attr.name);
       }
     });
@@ -37,9 +68,13 @@ export function sanitizeHtml(html: string): string {
     el.removeAttribute('action');
     el.removeAttribute('data');
     el.removeAttribute('srcdoc');
+    el.removeAttribute('href');
+    el.removeAttribute('src');
+    el.removeAttribute('xlink:href');
   });
 
   // Validate and sanitize URLs in href and src attributes
+  // (Should be mostly removed by above, but double-check)
   const elementsWithUrls = doc.querySelectorAll('[href], [src]');
   elementsWithUrls.forEach(el => {
     const href = el.getAttribute('href');
