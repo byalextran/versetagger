@@ -45,12 +45,6 @@ export interface VersetaggerConfig {
   autoScan?: boolean;
 
   /**
-   * Watch for DOM changes and re-scan new content (for SPAs)
-   * @default true
-   */
-  observeChanges?: boolean;
-
-  /**
    * CSS selector for elements to exclude from scanning
    * @default 'code, pre, script, style, .no-verse-tagging'
    */
@@ -78,34 +72,6 @@ export interface VersetaggerConfig {
   theme?: string | object;
 
   /**
-   * Cache configuration
-   */
-  cache?: {
-    /**
-     * Maximum number of verses to cache
-     * @default 100
-     */
-    maxSize?: number;
-
-    /**
-     * Time-to-live for cached verses in milliseconds
-     * @default 3600000 (1 hour)
-     */
-    ttl?: number;
-  };
-
-  /**
-   * Rate limiting configuration
-   */
-  rateLimit?: {
-    /**
-     * Maximum requests per second to the proxy
-     * @default 10
-     */
-    requestsPerSecond?: number;
-  };
-
-  /**
    * Accessibility configuration
    */
   accessibility?: {
@@ -120,12 +86,6 @@ export interface VersetaggerConfig {
      * @default true
      */
     announceToScreenReaders?: boolean;
-
-    /**
-     * Enable focus trap in modal
-     * @default true
-     */
-    focusTrap?: boolean;
   };
 
   /**
@@ -163,22 +123,13 @@ export const DEFAULT_CONFIG: Required<VersetaggerConfig> = {
   trigger: 'hover',
   hoverDelay: 500,
   autoScan: true,
-  observeChanges: true,
   excludeSelectors: 'code, pre, script, style, .no-verse-tagging',
   defaultVersion: 'NIV',
   colorScheme: 'auto',
   theme: 'default',
-  cache: {
-    maxSize: 100,
-    ttl: 3600000 // 1 hour
-  },
-  rateLimit: {
-    requestsPerSecond: 10
-  },
   accessibility: {
     keyboardNav: true,
-    announceToScreenReaders: true,
-    focusTrap: true
+    announceToScreenReaders: true
   },
   referenceClass: 'verse-reference',
   openLinksInNewTab: true,
@@ -193,14 +144,6 @@ export function mergeConfig(userConfig: VersetaggerConfig): Required<Versetagger
   return {
     ...DEFAULT_CONFIG,
     ...userConfig,
-    cache: {
-      ...DEFAULT_CONFIG.cache,
-      ...(userConfig.cache || {})
-    },
-    rateLimit: {
-      ...DEFAULT_CONFIG.rateLimit,
-      ...(userConfig.rateLimit || {})
-    },
     accessibility: {
       ...DEFAULT_CONFIG.accessibility,
       ...(userConfig.accessibility || {})
@@ -253,23 +196,6 @@ export function validateConfig(config: VersetaggerConfig): void {
   if (config.hoverDelay !== undefined && (config.hoverDelay < 0 || config.hoverDelay > 5000)) {
     throw new Error(
       `VerseTagger: Invalid hoverDelay "${config.hoverDelay}". Must be between 0 and 5000ms.`
-    );
-  }
-
-  // Validate cache size
-  if (config.cache?.maxSize !== undefined && config.cache.maxSize < 0) {
-    throw new Error(`VerseTagger: Invalid cache.maxSize "${config.cache.maxSize}". Must be >= 0.`);
-  }
-
-  // Validate cache TTL
-  if (config.cache?.ttl !== undefined && config.cache.ttl < 0) {
-    throw new Error(`VerseTagger: Invalid cache.ttl "${config.cache.ttl}". Must be >= 0.`);
-  }
-
-  // Validate rate limit
-  if (config.rateLimit?.requestsPerSecond !== undefined && config.rateLimit.requestsPerSecond <= 0) {
-    throw new Error(
-      `VerseTagger: Invalid rateLimit.requestsPerSecond "${config.rateLimit.requestsPerSecond}". Must be > 0.`
     );
   }
 }

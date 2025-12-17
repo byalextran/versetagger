@@ -22,8 +22,6 @@
 interface Env {
   /** YouVersion API key (stored as a secret) */
   YOUVERSION_API_KEY: string;
-  /** Optional: KV namespace for caching responses */
-  VERSE_CACHE?: KVNamespace;
 }
 
 /**
@@ -84,36 +82,11 @@ export default {
         );
       }
 
-      // Try to get from cache first
-      const cacheKey = buildCacheKey(params);
-      if (env.VERSE_CACHE) {
-        const cached = await env.VERSE_CACHE.get(cacheKey);
-        if (cached) {
-          const data = JSON.parse(cached);
-          return jsonResponse(data, {
-            headers: {
-              ...CORS_HEADERS,
-              'X-Cache': 'HIT'
-            }
-          });
-        }
-      }
-
       // Fetch from YouVersion API
       const verseData = await fetchFromYouVersion(params, env.YOUVERSION_API_KEY);
 
-      // Cache the response (1 hour TTL)
-      if (env.VERSE_CACHE) {
-        await env.VERSE_CACHE.put(cacheKey, JSON.stringify(verseData), {
-          expirationTtl: 3600 // 1 hour
-        });
-      }
-
       return jsonResponse(verseData, {
-        headers: {
-          ...CORS_HEADERS,
-          'X-Cache': 'MISS'
-        }
+        headers: CORS_HEADERS
       });
 
     } catch (error) {
@@ -145,18 +118,6 @@ class ApiError extends Error {
     super(message);
     this.name = 'ApiError';
   }
-}
-
-/**
- * Build cache key from request parameters
- */
-function buildCacheKey(params: {
-  book: string | null;
-  chapter: string | null;
-  verses: string | null;
-  version: string;
-}): string {
-  return `verse:${params.version}:${params.book}:${params.chapter}:${params.verses || 'all'}`;
 }
 
 /**

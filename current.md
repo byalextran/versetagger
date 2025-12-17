@@ -9,7 +9,7 @@ Build a pure TypeScript library that scans webpages for scripture references (e.
 - ✅ Modal display (hover/click triggers)
 - ✅ Auto-scan DOM on load
 - ✅ Light/dark mode with auto-detection
-- ✅ Themeable with preset themes + custom theme support
+- ✅ Themeable with light/dark modes + custom theme object support
 - ✅ TypeScript source, compile to JS
 - ✅ MIT License
 - ✅ Vanilla JS (no framework wrappers initially)
@@ -23,33 +23,25 @@ versetagger/
 │   ├── core/
 │   │   ├── VerseTagger.ts          # Main entry point
 │   │   ├── config.ts               # Configuration management
-│   │   ├── scanner.ts              # DOM scanning & MutationObserver
-│   │   └── cache.ts                # In-memory LRU cache
+│   │   └── scanner.ts              # DOM scanning
 │   ├── parser/
 │   │   ├── reference-parser.ts     # Parse scripture references
 │   │   ├── book-mappings.ts        # Book name → YouVersion codes
 │   │   └── range-expander.ts       # Expand verse ranges (1-3,5-7)
 │   ├── api/
-│   │   ├── youversion-client.ts    # API client with caching
-│   │   └── request-queue.ts        # Rate limit management
+│   │   └── youversion-client.ts    # API client with simple caching
 │   ├── modal/
-│   │   ├── modal-manager.ts        # Modal lifecycle & positioning
+│   │   ├── modal-manager.ts        # Modal lifecycle, positioning & accessibility
 │   │   ├── modal-renderer.ts       # Render verse content
-│   │   ├── event-handler.ts        # Hover/click events
-│   │   └── accessibility.ts        # ARIA, keyboard nav, focus trap
+│   │   └── event-handler.ts        # Hover/click events
 │   ├── theming/
-│   │   ├── theme-manager.ts        # Theme loading & switching
-│   │   ├── preset-themes.ts        # Built-in theme definitions
+│   │   ├── theme-manager.ts        # Theme switching & auto-detection
+│   │   ├── preset-themes.ts        # Hardcoded light/dark themes
 │   │   └── css-injector.ts         # Dynamic style injection
 │   └── utils/
 │       ├── dom-utils.ts            # Safe DOM manipulation
 │       ├── sanitizer.ts            # XSS prevention
 │       └── debounce.ts             # Performance utilities
-├── themes/                          # Theme JSON definitions
-│   ├── default-light.json
-│   ├── default-dark.json
-│   ├── sepia.json
-│   └── ocean.json
 ├── examples/
 │   ├── cloudflare-worker/          # Cloudflare Workers proxy
 │   │   ├── worker.ts
@@ -72,72 +64,6 @@ versetagger/
 
 ## Implementation Phases
 
-### Phase 1: Foundation (Core Parsing & Configuration)
-**Goal**: Set up project structure, implement scripture reference parsing
-
-**Tasks**:
-1. Initialize TypeScript project with esbuild
-   - `package.json`, `tsconfig.json`
-   - Build scripts for UMD + ESM bundles
-   - Setup dev server for testing
-
-2. Implement reference parser (`src/parser/`)
-   - **reference-parser.ts**: Regex patterns for all reference formats
-     - Handle books with numbers (1 John, 2 Corinthians)
-     - Handle ranges (Matthew 5:1-10)
-     - Handle abbreviations (Matt, Gen, Ps)
-     - Handle version suffixes (John 3:16 ESV)
-   - **book-mappings.ts**: Complete 66-book mapping
-     - Full names, abbreviations, YouVersion codes
-     - Include fuzzy matching for common typos
-   - **range-expander.ts**: Expand "1-3,5-7" → [1,2,3,5,6,7]
-
-3. Implement configuration system (`src/core/config.ts`)
-   - Type-safe config with defaults
-   - Validation for required fields (proxyUrl)
-   - Runtime config updates
-
-4. **Testing**: Unit tests for parser with edge cases
-   - "John 3:16", "1 John 2:1-5", "Psalm 23", "Matt 6:33 NIV"
-   - Roman numerals, multiple spaces, em-dashes
-   - Invalid references should be ignored
-
-**Critical Files**:
-- `src/parser/reference-parser.ts`
-- `src/parser/book-mappings.ts`
-- `src/core/config.ts`
-
-### Phase 2: API Integration & Caching
-**Goal**: Fetch verses from YouVersion via proxy, implement caching
-
-**Tasks**:
-1. Implement API client (`src/api/youversion-client.ts`)
-   - Construct YouVersion API requests
-   - Call user-provided proxy URL
-   - Parse API responses to normalized format
-   - Error handling (network failures, 404s, rate limits)
-
-2. Implement caching (`src/core/cache.ts`)
-   - LRU cache with configurable size (default 100 entries)
-   - TTL-based expiry (default 1 hour)
-   - Cache key format: `{book}_{chapter}_{verses}_{version}`
-
-3. Implement request queue (`src/api/request-queue.ts`)
-   - Rate limit management (default 10 req/sec)
-   - Queue requests to avoid overwhelming proxy
-   - Respect X-RateLimit headers from API
-
-4. Create Cloudflare Worker proxy example
-   - `examples/cloudflare-worker/worker.ts`
-   - Forward requests to YouVersion with API key
-   - CORS headers for browser requests
-   - Error handling
-
-**Critical Files**:
-- `src/api/youversion-client.ts`
-- `src/core/cache.ts`
-- `examples/cloudflare-worker/worker.ts`
-
 ### Phase 3: DOM Scanner & Reference Enhancement
 **Goal**: Scan page for references, wrap them in interactive elements
 
@@ -149,12 +75,7 @@ versetagger/
    - Replace text with reference links/spans
    - Add ARIA attributes for accessibility
 
-2. Implement MutationObserver for SPAs
-   - Watch for dynamically added content
-   - Re-scan new DOM nodes
-   - Configurable scan interval
-
-3. Implement event handler (`src/modal/event-handler.ts`)
+2. Implement event handler (`src/modal/event-handler.ts`)
    - Attach hover/click/keyboard events to references
    - Debounced hover with configurable delay (default 500ms)
    - Keyboard navigation (Enter/Space to open)
@@ -172,10 +93,14 @@ versetagger/
    - Smart positioning algorithm:
      - Prefer below target, fallback to above
      - Prevent viewport overflow
-     - Mobile: fixed bottom sheet
    - Loading states while fetching
    - Error states for API failures
    - Animate in/out (CSS transitions)
+   - Basic accessibility:
+     - Escape key to close
+     - ARIA labels and roles
+     - Restore focus on close
+     - Screen reader announcements
 
 2. Implement modal renderer (`src/modal/modal-renderer.ts`)
    - Render verse content with verse numbers
@@ -183,29 +108,21 @@ versetagger/
    - Link to YouVersion for full context
    - Display version abbreviation
 
-3. Implement accessibility (`src/modal/accessibility.ts`)
-   - Focus trap within modal
-   - Escape key to close
-   - ARIA labels and roles
-   - Restore focus on close
-   - Screen reader announcements
-
-4. Mobile responsiveness
+3. Mobile responsiveness
    - Touch-friendly close button
-   - Fixed position on small screens
+   - Responsive CSS (same positioning algorithm for all devices)
    - Prevent body scroll when open
 
 **Critical Files**:
 - `src/modal/modal-manager.ts`
 - `src/modal/modal-renderer.ts`
-- `src/modal/accessibility.ts`
 
 ### Phase 5: Theming System
-**Goal**: Support light/dark modes, custom themes, preset themes
+**Goal**: Support light/dark modes with auto-detection and custom themes
 
 **Tasks**:
 1. Implement theme manager (`src/theming/theme-manager.ts`)
-   - Load preset themes from JSON
+   - Define 2 hardcoded themes in TypeScript (light and dark)
    - Validate custom theme objects
    - Apply themes via CSS custom properties
    - Auto-detect color scheme (`prefers-color-scheme`)
@@ -217,21 +134,18 @@ versetagger/
    - Smooth transitions
    - Responsive breakpoints
 
-3. Create preset themes (JSON format)
+3. Define preset themes (`src/theming/preset-themes.ts`)
    - **Default Light**: High contrast, professional
    - **Default Dark**: Dark mode, comfortable colors
-   - **Sepia**: Warm, paper-like
-   - **Ocean**: Blue tones, calming
+   - Hardcoded as TypeScript objects (not JSON files)
 
 4. Theme customization API
-   - Users can pass theme object or name
-   - Register custom themes
-   - Theme JSON schema validation
+   - Users can pass custom theme object
+   - Theme object validation
 
 **Critical Files**:
 - `src/theming/theme-manager.ts`
-- `themes/default-light.json`
-- `themes/default-dark.json`
+- `src/theming/preset-themes.ts`
 
 ### Phase 6: Main Entry Point & Orchestration
 **Goal**: Tie all modules together, expose public API
@@ -245,8 +159,7 @@ versetagger/
      - `scan(element?)` - Scan specific element or whole page
      - `rescan()` - Re-scan entire page
      - `updateConfig(config)` - Update configuration
-     - `setTheme(name)` - Change theme
-     - `registerTheme(name, theme)` - Add custom theme
+     - `setTheme(themeObject | 'light' | 'dark')` - Change theme
      - `destroy()` - Cleanup listeners, remove modals
 
 2. Export for multiple module systems
@@ -270,13 +183,12 @@ versetagger/
 2. Performance optimization
    - Lazy load modal UI (only when first needed)
    - Debounce hover events
-   - Virtual scrolling for long chapters (future)
    - Bundle size analysis & tree-shaking
 
 3. Browser compatibility testing
    - Chrome, Firefox, Safari, Edge (last 2 versions)
    - Mobile Safari, Chrome Android
-   - Polyfill strategy for older browsers
+   - Document browser requirements (ES2017+)
 
 **Critical Files**:
 - `src/utils/sanitizer.ts`
@@ -297,7 +209,6 @@ versetagger/
 2. Create usage examples
    - Basic usage (HTML)
    - Custom theme example
-   - React integration example
    - Multiple configurations
 
 3. Proxy server examples
@@ -317,7 +228,6 @@ versetagger/
    - Parser tests (all reference formats)
    - Book mappings
    - Range expansion
-   - Cache behavior
    - Theme validation
 
 2. Integration tests
@@ -325,11 +235,7 @@ versetagger/
    - Scanner integration
    - Modal lifecycle
 
-3. E2E tests (Playwright)
-   - Full user workflows
-   - Cross-browser testing
-
-4. CI/CD setup (GitHub Actions)
+3. CI/CD setup (GitHub Actions)
    - Run tests on PR
    - Type checking
    - Lint (ESLint + Prettier)
@@ -371,11 +277,11 @@ versetagger/
 |--------|----------|-----------|
 | **Language** | TypeScript | Type safety, better DX, generates .d.ts |
 | **Build Tool** | esbuild | Fastest, simplest, future-proof |
-| **Bundle Format** | UMD + ESM | CDN + npm compatibility |
+| **Bundle Format** | UMD + ESM | UMD for simple script tags, ESM for bundlers |
 | **Module Pattern** | ES6 classes | Clean, maintainable, tree-shakeable |
 | **Theming** | CSS variables | Native, performant, easy customization |
 | **API Security** | User proxy required | Protects API keys, user controls rate limits |
-| **Caching** | In-memory LRU | Fast, no privacy concerns (no localStorage) |
+| **Caching** | Simple Map | Fast, lightweight, no complexity (MVP) |
 | **Browser Support** | ES2017+ | Modern browsers, smaller bundle |
 | **Dependencies** | Zero (core) | Minimal bundle, no supply chain risk |
 | **License** | MIT | Maximum permissiveness for adoption |
@@ -435,3 +341,62 @@ versetagger/
 - ✅ Accessible (WCAG 2.1 AA compliant)
 - ✅ 80%+ test coverage
 - ✅ Clear documentation with working examples
+
+## Completed Phases
+
+### Phase 1: Foundation (Core Parsing & Configuration)
+**Goal**: Set up project structure, implement scripture reference parsing
+
+**Tasks**:
+1. Initialize TypeScript project with esbuild
+   - `package.json`, `tsconfig.json`
+   - Build scripts for UMD + ESM bundles
+   - Setup dev server for testing
+
+2. Implement reference parser (`src/parser/`)
+   - **reference-parser.ts**: Regex patterns for all reference formats
+     - Handle books with numbers (1 John, 2 Corinthians)
+     - Handle ranges (Matthew 5:1-10)
+     - Handle abbreviations (Matt, Gen, Ps)
+     - Handle version suffixes (John 3:16 ESV)
+   - **book-mappings.ts**: Complete 66-book mapping
+     - Full names, abbreviations, YouVersion codes
+     - Include fuzzy matching for common typos
+   - **range-expander.ts**: Expand "1-3,5-7" → [1,2,3,5,6,7]
+
+3. Implement configuration system (`src/core/config.ts`)
+   - Type-safe config with defaults
+   - Validation for required fields (proxyUrl)
+   - Runtime config updates
+
+4. **Testing**: Unit tests for parser with edge cases
+   - "John 3:16", "1 John 2:1-5", "Psalm 23", "Matt 6:33 NIV"
+   - Roman numerals, multiple spaces, em-dashes
+   - Invalid references should be ignored
+
+**Critical Files**:
+- `src/parser/reference-parser.ts`
+- `src/parser/book-mappings.ts`
+- `src/core/config.ts`
+
+### Phase 2: API Integration & Caching
+**Goal**: Fetch verses from YouVersion via proxy with simple caching
+
+**Tasks**:
+1. Implement API client (`src/api/youversion-client.ts`)
+   - Construct YouVersion API requests
+   - Call user-provided proxy URL
+   - Parse API responses to normalized format
+   - Error handling (network failures, 404s, rate limits)
+   - Simple in-memory cache using Map (no TTL, no size limits for MVP)
+   - Cache key format: `{book}_{chapter}_{verses}_{version}`
+
+2. Create Cloudflare Worker proxy example
+   - `examples/cloudflare-worker/worker.ts`
+   - Forward requests to YouVersion with API key
+   - CORS headers for browser requests
+   - Error handling
+
+**Critical Files**:
+- `src/api/youversion-client.ts`
+- `examples/cloudflare-worker/worker.ts`
