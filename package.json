@@ -1,0 +1,33 @@
+{
+  "name": "versetagger",
+  "version": "0.1.0",
+  "description": "Pure TypeScript library that scans webpages for scripture references and displays verse content in elegant, customizable modals",
+  "main": "dist/versetagger.js",
+  "module": "dist/versetagger.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "themes"
+  ],
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --dev",
+    "watch": "node build.js --watch",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "bible",
+    "scripture",
+    "verse",
+    "youversion",
+    "reference",
+    "tooltip",
+    "modal"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0"
+  }
+}
