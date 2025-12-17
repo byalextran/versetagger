@@ -32,19 +32,26 @@ export class ModalManager {
   }
 
   /**
-   * Initialize the modal system
+   * Initialize the modal system (lazy - modal created on first use)
    */
   initialize(renderCallback: (container: HTMLElement, content: VerseContent) => void): void {
     this.renderCallback = renderCallback;
-    injectModalStyles();
-    this.createModalContainer();
-    this.attachGlobalListeners();
+    // Note: Modal container and styles are created lazily on first show
+    // This reduces initial page load impact
   }
 
   /**
-   * Create the modal container element
+   * Ensure modal is created (lazy initialization)
+   * This is called on first use to minimize initial page load impact
    */
-  private createModalContainer(): void {
+  private ensureModalCreated(): void {
+    if (this.modalElement) {
+      return; // Already created
+    }
+
+    // Inject styles on first use
+    injectModalStyles();
+
     // Create container outside main DOM
     this.modalElement = document.createElement('div');
     this.modalElement.id = 'versetagger-modal';
@@ -69,6 +76,9 @@ export class ModalManager {
 
     // Append to body
     document.body.appendChild(this.modalElement);
+
+    // Attach global listeners (only once)
+    this.attachGlobalListeners();
   }
 
   /**
@@ -138,6 +148,9 @@ export class ModalManager {
    * Show modal in loading state
    */
   showLoading(targetElement: HTMLElement): void {
+    // Ensure modal is created (lazy initialization)
+    this.ensureModalCreated();
+
     if (!this.modalElement || !this.containerElement) {
       return;
     }
