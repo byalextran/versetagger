@@ -34,34 +34,20 @@ export function renderVerseContent(
 
   container.appendChild(header);
 
-  // Create verse container
-  const versesContainer = document.createElement('div');
-  versesContainer.className = 'versetagger-modal-verses';
+  // Create content container
+  const contentContainer = document.createElement('div');
+  contentContainer.className = 'versetagger-modal-content';
 
-  // Render each verse
-  content.verses.forEach(verse => {
-    const verseEl = document.createElement('div');
-    verseEl.className = 'versetagger-modal-verse';
+  // Render verse content
+  const contentText = document.createElement('p');
+  contentText.className = 'versetagger-content-text';
 
-    // Verse number
-    const verseNumber = document.createElement('span');
-    verseNumber.className = 'versetagger-verse-number';
-    verseNumber.appendChild(createTextNode(verse.number.toString()));
-    verseEl.appendChild(verseNumber);
+  // Sanitize the text to prevent XSS
+  const sanitizedText = sanitizeHtml(content.content);
+  contentText.innerHTML = sanitizedText;
 
-    // Verse text - sanitize HTML from API
-    const verseText = document.createElement('span');
-    verseText.className = 'versetagger-verse-text';
-
-    // Sanitize the text to prevent XSS
-    const sanitizedText = sanitizeHtml(verse.text);
-    verseText.innerHTML = sanitizedText;
-
-    verseEl.appendChild(verseText);
-    versesContainer.appendChild(verseEl);
-  });
-
-  container.appendChild(versesContainer);
+  contentContainer.appendChild(contentText);
+  container.appendChild(contentContainer);
 
   // Create footer with link to YouVersion
   const footer = document.createElement('div');
@@ -89,15 +75,12 @@ function createYouVersionLink(
   // Get book ID for YouVersion URL
   const bookId = getBookId(content.book);
 
-  // Format verses for URL
-  const versesParam = formatVersesForUrl(content.verses.map(v => v.number));
-
   // Replace placeholders
   url = url
     .replace('{version}', versionId)
     .replace('{book}', bookId)
     .replace('{chapter}', content.chapter.toString())
-    .replace('{verses}', versesParam);
+    .replace('{verses}', content.verses);
 
   // Create safe link
   const link = createSafeLink(
@@ -168,28 +151,3 @@ function getBookId(bookCode: string): string {
   return bookMap[bookCode.toUpperCase()] || bookCode;
 }
 
-/**
- * Format verse numbers for URL
- */
-function formatVersesForUrl(verses: number[]): string {
-  if (verses.length === 0) {
-    return '';
-  }
-
-  if (verses.length === 1) {
-    return verses[0].toString();
-  }
-
-  // Check if it's a continuous range
-  const sorted = [...verses].sort((a, b) => a - b);
-  const min = sorted[0];
-  const max = sorted[sorted.length - 1];
-
-  // If continuous, format as range
-  if (max - min === sorted.length - 1) {
-    return `${min}-${max}`;
-  }
-
-  // Otherwise, use comma-separated list
-  return sorted.join(',');
-}

@@ -18,7 +18,7 @@ export type {
 export type { Theme, ThemeColors, ThemeSpacing, ThemeFonts } from './theming/preset-themes';
 
 // API types
-export type { VerseContent, VerseData, ApiError } from './api/youversion-client';
+export type { VerseContent, ApiError } from './api/youversion-client';
 
 // Scanner types
 export type { ScannedReference } from './core/scanner';

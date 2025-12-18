@@ -13,22 +13,14 @@ export interface VerseContent {
   book: string;
   /** Chapter number */
   chapter: number;
-  /** Array of verse objects with verse number and text */
-  verses: VerseData[];
+  /** Verse text content from API */
+  content: string;
+  /** Verse range string (e.g., "1-3", "1,3,5-7") */
+  verses: string;
   /** Bible version used */
   version: string;
   /** Human-readable reference (e.g., "John 3:16") */
   reference: string;
-}
-
-/**
- * Individual verse data
- */
-export interface VerseData {
-  /** Verse number */
-  number: number;
-  /** Verse text content */
-  text: string;
 }
 
 /**
@@ -84,7 +76,7 @@ export class YouVersionClient {
     const params = {
       book: reference.book,
       chapter: reference.chapter.toString(),
-      verses: reference.verses.length > 0 ? reference.verses.join(',') : undefined,
+      verses: reference.verses || undefined,
       version: version
     };
 
@@ -201,44 +193,24 @@ export class YouVersionClient {
       throw new ApiError('Invalid API response: Expected JSON object');
     }
 
-    // The proxy should return a standardized format:
-    // {
-    //   verses: [
-    //     { number: 1, text: "In the beginning..." },
-    //     { number: 2, text: "And the earth was..." }
-    //   ],
-    //   reference: "Genesis 1:1-2",
-    //   version: "NIV"
-    // }
-
-    if (!Array.isArray(data.verses)) {
-      throw new ApiError('Invalid API response: Missing or invalid verses array');
+    if (this.config.debug) {
+      console.log('[YouVersionClient] Proxy response:', JSON.stringify(data, null, 2));
     }
 
-    // Parse verses
-    const verses: VerseData[] = data.verses.map((v: any) => {
-      if (typeof v !== 'object' || v === null) {
-        throw new ApiError('Invalid API response: Verse must be an object');
-      }
+    // The proxy should return data in the format:
+    // { id: "GEN.1.1", content: "In the beginning...", reference: "Genesis 1:1" }
+    // The content field contains all requested verses combined (without verse numbers)
 
-      const number = typeof v.number === 'number' ? v.number : parseInt(v.number, 10);
-      const text = typeof v.text === 'string' ? v.text : String(v.text);
-
-      if (isNaN(number) || !text) {
-        throw new ApiError('Invalid API response: Verse missing number or text');
-      }
-
-      return { number, text };
-    });
-
-    if (verses.length === 0) {
-      throw new ApiError('Invalid API response: No verses found in response');
+    if (!data.content || typeof data.content !== 'string') {
+      throw new ApiError(`Invalid API response: Expected 'content' field with verse text. Got: ${JSON.stringify(data)}`);
     }
 
+    // Return the content directly without wrapping in verse objects
     return {
       book: reference.book,
       chapter: reference.chapter,
-      verses,
+      content: data.content,
+      verses: reference.verses,
       version: data.version || version,
       reference: data.reference || this.formatReference(reference, version)
     };
@@ -250,18 +222,8 @@ export class YouVersionClient {
   private formatReference(ref: ScriptureReference, version: string): string {
     let result = `${ref.book} ${ref.chapter}`;
 
-    if (ref.verses && ref.verses.length > 0) {
-      if (ref.verses.length === 1) {
-        result += `:${ref.verses[0]}`;
-      } else {
-        const min = Math.min(...ref.verses);
-        const max = Math.max(...ref.verses);
-        if (min === max) {
-          result += `:${min}`;
-        } else {
-          result += `:${min}-${max}`;
-        }
-      }
+    if (ref.verses) {
+      result += `:${ref.verses}`;
     }
 
     result += ` ${version}`;

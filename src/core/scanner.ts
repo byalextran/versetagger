@@ -162,7 +162,7 @@ export class DOMScanner {
     if (this.config.debug) {
       console.log(`VerseTagger: [Regex] Found ${references.length} match(es)`);
       references.forEach((ref, idx) => {
-        console.log(`VerseTagger: [Match ${idx + 1}] "${ref.text}" -> ${ref.book} ${ref.chapter}:${ref.verses.join(',')}${ref.version ? ' ' + ref.version : ''}`);
+        console.log(`VerseTagger: [Match ${idx + 1}] "${ref.text}" -> ${ref.book} ${ref.chapter}:${ref.verses}${ref.version ? ' ' + ref.version : ''}`);
       });
     }
 
@@ -281,7 +281,7 @@ export class DOMScanner {
     // Store reference data as data attributes for event handlers
     element.dataset.book = ref.book;
     element.dataset.chapter = ref.chapter.toString();
-    element.dataset.verses = ref.verses.join(',');
+    element.dataset.verses = ref.verses;
     if (ref.version) {
       element.dataset.version = ref.version;
     }
@@ -319,9 +319,7 @@ export class DOMScanner {
    */
   private buildReferenceUrl(ref: ScriptureReference): string {
     const versionAbbr = ref.version || this.config.defaultVersion;
-    const versesStr = ref.verses.length > 0
-      ? ref.verses.join(',')
-      : '';
+    const versesStr = ref.verses || '';
 
     // Look up the Bible ID from the version abbreviation
     const bibleVersion = findVersion(versionAbbr);

@@ -301,7 +301,7 @@ export class VerseTagger {
         const reference: ScriptureReference = {
           book,
           chapter: parseInt(chapter),
-          verses: verses ? verses.split(',').map(v => parseInt(v.trim())) : [],
+          verses: verses || '',
           version: version || undefined,
           text: element.textContent || '',
           startIndex: 0,

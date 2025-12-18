@@ -4,7 +4,6 @@
  */
 
 import { findBook, getBookNamesRegex } from './book-mappings';
-import { expandVerseRange } from './range-expander';
 import { getTranslationsRegex } from './bible-versions';
 
 export interface ScriptureReference {
@@ -14,8 +13,8 @@ export interface ScriptureReference {
   book: string;
   /** Chapter number */
   chapter: number;
-  /** Verse numbers (expanded from ranges) */
-  verses: number[];
+  /** Verse range string exactly as matched (e.g., "1-5", "1,3,5-7") */
+  verses: string;
   /** Bible version (e.g., "NIV", "ESV"), undefined if not specified */
   version?: string;
   /** Start position in original text */
@@ -86,17 +85,12 @@ export function parseReferences(text: string): ScriptureReference[] {
       continue; // Skip invalid chapter
     }
 
-    // Parse verses (required in the regex pattern)
-    const verses = expandVerseRange(versesStr);
-    if (verses.length === 0) {
-      continue; // Skip if verse range is invalid
-    }
-
+    // Store verses exactly as matched (e.g., "1-3" stays as "1-3")
     references.push({
       text: fullMatch,
       book: book.code,
       chapter,
-      verses,
+      verses: versesStr,
       version: version ? version.toUpperCase() : undefined,
       startIndex: match.index,
       endIndex: match.index + fullMatch.length
