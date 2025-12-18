@@ -134,6 +134,28 @@ const VERSION_MAP: Record<string, number> = BIBLE_VERSIONS.reduce((map, version)
 }, {} as Record<string, number>);
 
 /**
+ * Parse error message from YouVersion API response
+ * Handles two formats:
+ * 1. {"message": "Access denied for 116"}
+ * 2. {"fault": {"faultstring": "Invalid ApiKey", "detail": {...}}}
+ */
+function parseApiErrorMessage(responseBody: any): string | null {
+  try {
+    // Handle format 1: {"message": "..."}
+    if (responseBody?.message) {
+      return responseBody.message;
+    }
+    // Handle format 2: {"fault": {"faultstring": "..."}}
+    if (responseBody?.fault?.faultstring) {
+      return responseBody.fault.faultstring;
+    }
+  } catch {
+    // Ignore parsing errors
+  }
+  return null;
+}
+
+/**
  * Fetch verse data from YouVersion API
  */
 async function fetchFromYouVersion(
@@ -166,23 +188,38 @@ async function fetchFromYouVersion(
     });
 
     if (!response.ok) {
+      // Attempt to parse API error message from response body
+      let apiMessage: string | null = null;
+      try {
+        const errorBody = await response.json();
+        apiMessage = parseApiErrorMessage(errorBody);
+      } catch {
+        // Response wasn't JSON or couldn't be parsed
+      }
+
       if (response.status === 404) {
         throw new ApiError(
-          'Verse not found. The reference may be invalid or not available in this version.',
+          apiMessage || 'Verse not found. The reference may be invalid or not available in this version.',
           404
         );
       }
 
       if (response.status === 429) {
-        throw new ApiError('Rate limit exceeded. Please try again later.', 429);
+        throw new ApiError(
+          apiMessage || 'Rate limit exceeded. Please try again later.',
+          429
+        );
       }
 
       if (response.status === 401 || response.status === 403) {
-        throw new ApiError('API authentication failed. Check your API key.', 500);
+        throw new ApiError(
+          apiMessage || 'API authentication failed. Check your API key.',
+          response.status  // Use original status code, not 500
+        );
       }
 
       throw new ApiError(
-        `YouVersion API error: ${response.status} ${response.statusText}`,
+        apiMessage || `YouVersion API error: ${response.status} ${response.statusText}`,
         response.status
       );
     }
