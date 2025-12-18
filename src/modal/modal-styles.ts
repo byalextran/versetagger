@@ -305,9 +305,9 @@ export const MODAL_BASE_STYLES = `
   }
 }
 
-/* Prevent body scroll when modal is open (will be toggled by JS) */
+/* Modal open class - reserved for future use if needed */
 body.versetagger-modal-open {
-  overflow: hidden;
+  /* No styles needed - modal scrolls naturally with page content */
 }
 
 /* High contrast mode support */

@@ -197,7 +197,7 @@ export class ModalManager {
     // Store focus before opening modal
     this.focusBeforeModal = document.activeElement as HTMLElement;
 
-    // Prevent body scroll on mobile
+    // Add modal open class (currently unused, but may be needed for future features)
     document.body.classList.add('versetagger-modal-open');
 
     this.currentTarget = targetElement;
@@ -318,7 +318,7 @@ export class ModalManager {
       this.bridgeElement.style.display = 'none';
     }
 
-    // Re-enable body scroll
+    // Remove modal open class
     document.body.classList.remove('versetagger-modal-open');
 
     // Wait for transition to complete before hiding
@@ -540,7 +540,7 @@ export class ModalManager {
       this.containerElement = null;
       this.bridgeElement = null;
     }
-    // Re-enable body scroll
+    // Remove modal open class
     document.body.classList.remove('versetagger-modal-open');
     // Remove injected styles
     removeModalStyles();
