@@ -124,10 +124,10 @@
             </p>
 
             <p>
-                One of the most well-known verses is John 3:16, which speaks of
-                God's love for the world. Another powerful passage is Romans
+                One of the most well-known verses is John 3:16 AMP, which speaks
+                of God's love for the world. Another powerful passage is Romans
                 8:28, which reminds us that all things work together for good.
-                The promise in Jeremiah 29:11 gives us hope for the future.
+                The promise in Jeremiah 29:11 NLT gives us hope for the future.
             </p>
 
             <p>
@@ -239,6 +239,9 @@
                     autoScan: true, // Automatically scan on load
                     debug: true, // Enable console logging (remove in production)
                 });
+
+                // Make versetagger available globally for debugging
+                window.versetagger = versetagger;
 
                 console.log("VerseTagger initialized successfully!");
                 console.log("Version:", VerseTagger.version);

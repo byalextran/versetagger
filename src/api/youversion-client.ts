@@ -113,6 +113,11 @@ export class YouVersionClient {
 
     const url = `${this.config.proxyUrl}?${queryParams.toString()}`;
 
+    if (this.config.debug) {
+      console.log('[YouVersionClient] Request URL:', url);
+      console.log('[YouVersionClient] Request params:', params);
+    }
+
     // Create abort controller for timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
@@ -164,7 +169,7 @@ export class YouVersionClient {
       if (error instanceof Error && error.name === 'AbortError') {
         throw new ApiError(
           "Request timed out. Try again in a few seconds.",
-          408,
+          undefined,
           error
         );
       }
@@ -197,6 +202,8 @@ export class YouVersionClient {
 
     if (this.config.debug) {
       console.log('[YouVersionClient] Proxy response:', JSON.stringify(data, null, 2));
+      console.log('[YouVersionClient] Requested version:', version);
+      console.log('[YouVersionClient] Content preview:', data.content?.substring(0, 100));
     }
 
     // The proxy should return data in the format:
@@ -213,7 +220,7 @@ export class YouVersionClient {
       chapter: reference.chapter,
       content: data.content,
       verses: reference.verses,
-      version: data.version || version,
+      version: version, // Use the requested version, not the API's version
       reference: data.reference || this.formatReference(reference, version)
     };
   }

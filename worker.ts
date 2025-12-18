@@ -16,6 +16,8 @@
  * $ wrangler deploy
  */
 
+import { BIBLE_VERSIONS } from './src/parser/bible-versions';
+
 /**
  * Environment bindings for Cloudflare Worker
  */
@@ -123,18 +125,13 @@ class ApiError extends Error {
 }
 
 /**
- * Map common Bible version abbreviations to YouVersion bible_id
- * Default is 206 (NIV) as per API documentation
+ * Build VERSION_MAP from BIBLE_VERSIONS
+ * Maps version abbreviations to YouVersion bible_id
  */
-const VERSION_MAP: Record<string, number> = {
-  'NIV': 206,
-  'KJV': 1,
-  'ESV': 59,
-  'NLT': 116,
-  'NKJV': 114,
-  'NASB': 100,
-  // Add more versions as needed
-};
+const VERSION_MAP: Record<string, number> = BIBLE_VERSIONS.reduce((map, version) => {
+  map[version.abbreviation.toUpperCase()] = version.id;
+  return map;
+}, {} as Record<string, number>);
 
 /**
  * Fetch verse data from YouVersion API
