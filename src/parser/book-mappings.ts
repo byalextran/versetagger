@@ -17,273 +17,273 @@ export const BOOK_MAPPINGS: BookMapping[] = [
     name: 'Genesis',
     code: 'GEN',
     testament: 'OT',
-    abbreviations: ['Gen', 'Ge', 'Gn'],
+    abbreviations: ['Gen'],
     alternateNames: []
   },
   {
     name: 'Exodus',
     code: 'EXO',
     testament: 'OT',
-    abbreviations: ['Exod', 'Exo', 'Ex'],
+    abbreviations: ['Ex'],
     alternateNames: []
   },
   {
     name: 'Leviticus',
     code: 'LEV',
     testament: 'OT',
-    abbreviations: ['Lev', 'Le', 'Lv'],
+    abbreviations: ['Lev'],
     alternateNames: []
   },
   {
     name: 'Numbers',
     code: 'NUM',
     testament: 'OT',
-    abbreviations: ['Num', 'Nu', 'Nm', 'Nb'],
+    abbreviations: ['Num'],
     alternateNames: []
   },
   {
     name: 'Deuteronomy',
     code: 'DEU',
     testament: 'OT',
-    abbreviations: ['Deut', 'Deu', 'De', 'Dt'],
+    abbreviations: ['Deut'],
     alternateNames: []
   },
   {
     name: 'Joshua',
     code: 'JOS',
     testament: 'OT',
-    abbreviations: ['Josh', 'Jos', 'Jsh'],
+    abbreviations: ['Josh'],
     alternateNames: []
   },
   {
     name: 'Judges',
     code: 'JDG',
     testament: 'OT',
-    abbreviations: ['Judg', 'Jdg', 'Jg', 'Jdgs'],
+    abbreviations: ['Judg'],
     alternateNames: []
   },
   {
     name: 'Ruth',
     code: 'RUT',
     testament: 'OT',
-    abbreviations: ['Rth', 'Ru'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: '1 Samuel',
     code: '1SA',
     testament: 'OT',
-    abbreviations: ['1 Sam', '1Sam', '1 Sa', '1Sa', 'I Sam', 'I Sa', 'First Samuel'],
-    alternateNames: ['1 Sm', '1Sm']
+    abbreviations: ['1 Sam'],
+    alternateNames: []
   },
   {
     name: '2 Samuel',
     code: '2SA',
     testament: 'OT',
-    abbreviations: ['2 Sam', '2Sam', '2 Sa', '2Sa', 'II Sam', 'II Sa', 'Second Samuel'],
-    alternateNames: ['2 Sm', '2Sm']
+    abbreviations: ['2 Sam'],
+    alternateNames: []
   },
   {
     name: '1 Kings',
     code: '1KI',
     testament: 'OT',
-    abbreviations: ['1 Kgs', '1Kgs', '1 Ki', '1Ki', 'I Kings', 'I Kgs', 'First Kings'],
-    alternateNames: ['1 Kin', '1Kin']
+    abbreviations: [],
+    alternateNames: []
   },
   {
     name: '2 Kings',
     code: '2KI',
     testament: 'OT',
-    abbreviations: ['2 Kgs', '2Kgs', '2 Ki', '2Ki', 'II Kings', 'II Kgs', 'Second Kings'],
-    alternateNames: ['2 Kin', '2Kin']
+    abbreviations: [],
+    alternateNames: []
   },
   {
     name: '1 Chronicles',
     code: '1CH',
     testament: 'OT',
-    abbreviations: ['1 Chr', '1Chr', '1 Ch', '1Ch', 'I Chronicles', 'I Chr', 'First Chronicles'],
-    alternateNames: ['1 Chron', '1Chron']
+    abbreviations: ['1 Chron'],
+    alternateNames: []
   },
   {
     name: '2 Chronicles',
     code: '2CH',
     testament: 'OT',
-    abbreviations: ['2 Chr', '2Chr', '2 Ch', '2Ch', 'II Chronicles', 'II Chr', 'Second Chronicles'],
-    alternateNames: ['2 Chron', '2Chron']
+    abbreviations: ['2 Chron'],
+    alternateNames: []
   },
   {
     name: 'Ezra',
     code: 'EZR',
     testament: 'OT',
-    abbreviations: ['Ezr', 'Ez'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'Nehemiah',
     code: 'NEH',
     testament: 'OT',
-    abbreviations: ['Neh', 'Ne'],
+    abbreviations: ['Neh'],
     alternateNames: []
   },
   {
     name: 'Esther',
     code: 'EST',
     testament: 'OT',
-    abbreviations: ['Esth', 'Est', 'Es'],
+    abbreviations: ['Est'],
     alternateNames: []
   },
   {
     name: 'Job',
     code: 'JOB',
     testament: 'OT',
-    abbreviations: ['Jb'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'Psalm',
     code: 'PSA',
     testament: 'OT',
-    abbreviations: ['Ps', 'Psa', 'Psm', 'Pss'],
-    alternateNames: ['Psalms']
+    abbreviations: ['Ps'],
+    alternateNames: []
   },
   {
     name: 'Proverbs',
     code: 'PRO',
     testament: 'OT',
-    abbreviations: ['Prov', 'Pro', 'Prv', 'Pr'],
+    abbreviations: ['Prov'],
     alternateNames: []
   },
   {
     name: 'Ecclesiastes',
     code: 'ECC',
     testament: 'OT',
-    abbreviations: ['Eccles', 'Eccle', 'Ecc', 'Ec', 'Qoh'],
+    abbreviations: ['Eccles'],
     alternateNames: []
   },
   {
     name: 'Song of Solomon',
     code: 'SNG',
     testament: 'OT',
-    abbreviations: ['Song', 'Song of Sol', 'SOS', 'So', 'SS'],
-    alternateNames: ['Song of Songs', 'Canticles', 'Canticle of Canticles']
+    abbreviations: ['Song'],
+    alternateNames: []
   },
   {
     name: 'Isaiah',
     code: 'ISA',
     testament: 'OT',
-    abbreviations: ['Isa', 'Is'],
+    abbreviations: ['Isa'],
     alternateNames: []
   },
   {
     name: 'Jeremiah',
     code: 'JER',
     testament: 'OT',
-    abbreviations: ['Jer', 'Je', 'Jr'],
+    abbreviations: ['Jer'],
     alternateNames: []
   },
   {
     name: 'Lamentations',
     code: 'LAM',
     testament: 'OT',
-    abbreviations: ['Lam', 'La'],
+    abbreviations: ['Lam'],
     alternateNames: []
   },
   {
     name: 'Ezekiel',
     code: 'EZK',
     testament: 'OT',
-    abbreviations: ['Ezek', 'Eze', 'Ezk'],
+    abbreviations: ['Ezek'],
     alternateNames: []
   },
   {
     name: 'Daniel',
     code: 'DAN',
     testament: 'OT',
-    abbreviations: ['Dan', 'Da', 'Dn'],
+    abbreviations: ['Dan'],
     alternateNames: []
   },
   {
     name: 'Hosea',
     code: 'HOS',
     testament: 'OT',
-    abbreviations: ['Hos', 'Ho'],
+    abbreviations: ['Hos'],
     alternateNames: []
   },
   {
     name: 'Joel',
     code: 'JOL',
     testament: 'OT',
-    abbreviations: ['Joe', 'Jl'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'Amos',
     code: 'AMO',
     testament: 'OT',
-    abbreviations: ['Am'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'Obadiah',
     code: 'OBA',
     testament: 'OT',
-    abbreviations: ['Obad', 'Ob'],
+    abbreviations: ['Obad'],
     alternateNames: []
   },
   {
     name: 'Jonah',
     code: 'JON',
     testament: 'OT',
-    abbreviations: ['Jon', 'Jnh'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'Micah',
     code: 'MIC',
     testament: 'OT',
-    abbreviations: ['Mic', 'Mc'],
+    abbreviations: ['Mic'],
     alternateNames: []
   },
   {
     name: 'Nahum',
     code: 'NAM',
     testament: 'OT',
-    abbreviations: ['Nah', 'Na'],
+    abbreviations: ['Nah'],
     alternateNames: []
   },
   {
     name: 'Habakkuk',
     code: 'HAB',
     testament: 'OT',
-    abbreviations: ['Hab', 'Hb'],
+    abbreviations: ['Hab'],
     alternateNames: []
   },
   {
     name: 'Zephaniah',
     code: 'ZEP',
     testament: 'OT',
-    abbreviations: ['Zeph', 'Zep', 'Zp'],
+    abbreviations: ['Zeph'],
     alternateNames: []
   },
   {
     name: 'Haggai',
     code: 'HAG',
     testament: 'OT',
-    abbreviations: ['Hag', 'Hg'],
+    abbreviations: ['Hag'],
     alternateNames: []
   },
   {
     name: 'Zechariah',
     code: 'ZEC',
     testament: 'OT',
-    abbreviations: ['Zech', 'Zec', 'Zc'],
+    abbreviations: ['Zech'],
     alternateNames: []
   },
   {
     name: 'Malachi',
     code: 'MAL',
     testament: 'OT',
-    abbreviations: ['Mal', 'Ml'],
+    abbreviations: ['Mal'],
     alternateNames: []
   },
 
@@ -292,126 +292,126 @@ export const BOOK_MAPPINGS: BookMapping[] = [
     name: 'Matthew',
     code: 'MAT',
     testament: 'NT',
-    abbreviations: ['Matt', 'Mat', 'Mt'],
+    abbreviations: ['Matt'],
     alternateNames: []
   },
   {
     name: 'Mark',
     code: 'MRK',
     testament: 'NT',
-    abbreviations: ['Mrk', 'Mar', 'Mk', 'Mr'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'Luke',
     code: 'LUK',
     testament: 'NT',
-    abbreviations: ['Luk', 'Lk'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'John',
     code: 'JHN',
     testament: 'NT',
-    abbreviations: ['Jhn', 'Jn'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'Acts',
     code: 'ACT',
     testament: 'NT',
-    abbreviations: ['Act', 'Ac'],
-    alternateNames: ['Acts of the Apostles']
+    abbreviations: [],
+    alternateNames: []
   },
   {
     name: 'Romans',
     code: 'ROM',
     testament: 'NT',
-    abbreviations: ['Rom', 'Ro', 'Rm'],
+    abbreviations: ['Rom'],
     alternateNames: []
   },
   {
     name: '1 Corinthians',
     code: '1CO',
     testament: 'NT',
-    abbreviations: ['1 Cor', '1Cor', '1 Co', '1Co', 'I Corinthians', 'I Cor', 'First Corinthians'],
+    abbreviations: ['1 Cor'],
     alternateNames: []
   },
   {
     name: '2 Corinthians',
     code: '2CO',
     testament: 'NT',
-    abbreviations: ['2 Cor', '2Cor', '2 Co', '2Co', 'II Corinthians', 'II Cor', 'Second Corinthians'],
+    abbreviations: ['2 Cor'],
     alternateNames: []
   },
   {
     name: 'Galatians',
     code: 'GAL',
     testament: 'NT',
-    abbreviations: ['Gal', 'Ga'],
+    abbreviations: ['Gal'],
     alternateNames: []
   },
   {
     name: 'Ephesians',
     code: 'EPH',
     testament: 'NT',
-    abbreviations: ['Eph', 'Ephes'],
+    abbreviations: ['Eph'],
     alternateNames: []
   },
   {
     name: 'Philippians',
     code: 'PHP',
     testament: 'NT',
-    abbreviations: ['Phil', 'Php', 'Pp'],
+    abbreviations: ['Phil'],
     alternateNames: []
   },
   {
     name: 'Colossians',
     code: 'COL',
     testament: 'NT',
-    abbreviations: ['Col', 'Co'],
+    abbreviations: ['Col'],
     alternateNames: []
   },
   {
     name: '1 Thessalonians',
     code: '1TH',
     testament: 'NT',
-    abbreviations: ['1 Thess', '1Thess', '1 Thes', '1Thes', '1 Th', '1Th', 'I Thessalonians', 'I Thess', 'First Thessalonians'],
+    abbreviations: ['1 Thess'],
     alternateNames: []
   },
   {
     name: '2 Thessalonians',
     code: '2TH',
     testament: 'NT',
-    abbreviations: ['2 Thess', '2Thess', '2 Thes', '2Thes', '2 Th', '2Th', 'II Thessalonians', 'II Thess', 'Second Thessalonians'],
+    abbreviations: ['2 Thess'],
     alternateNames: []
   },
   {
     name: '1 Timothy',
     code: '1TI',
     testament: 'NT',
-    abbreviations: ['1 Tim', '1Tim', '1 Ti', '1Ti', 'I Timothy', 'I Tim', 'First Timothy'],
+    abbreviations: ['1 Tim'],
     alternateNames: []
   },
   {
     name: '2 Timothy',
     code: '2TI',
     testament: 'NT',
-    abbreviations: ['2 Tim', '2Tim', '2 Ti', '2Ti', 'II Timothy', 'II Tim', 'Second Timothy'],
+    abbreviations: ['2 Tim'],
     alternateNames: []
   },
   {
     name: 'Titus',
     code: 'TIT',
     testament: 'NT',
-    abbreviations: ['Tit', 'Ti'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'Philemon',
     code: 'PHM',
     testament: 'NT',
-    abbreviations: ['Philem', 'Phm', 'Pm'],
+    abbreviations: ['Philem'],
     alternateNames: []
   },
   {
@@ -425,57 +425,57 @@ export const BOOK_MAPPINGS: BookMapping[] = [
     name: 'James',
     code: 'JAS',
     testament: 'NT',
-    abbreviations: ['Jas', 'Jm'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: '1 Peter',
     code: '1PE',
     testament: 'NT',
-    abbreviations: ['1 Pet', '1Pet', '1 Pe', '1Pe', 'I Peter', 'I Pet', 'First Peter'],
-    alternateNames: ['1 Pt', '1Pt']
+    abbreviations: ['1 Pet'],
+    alternateNames: []
   },
   {
     name: '2 Peter',
     code: '2PE',
     testament: 'NT',
-    abbreviations: ['2 Pet', '2Pet', '2 Pe', '2Pe', 'II Peter', 'II Pet', 'Second Peter'],
-    alternateNames: ['2 Pt', '2Pt']
+    abbreviations: ['2 Pet'],
+    alternateNames: []
   },
   {
     name: '1 John',
     code: '1JN',
     testament: 'NT',
-    abbreviations: ['1 Jn', '1Jn', '1 Jhn', '1Jhn', 'I John', 'I Jn', 'First John'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: '2 John',
     code: '2JN',
     testament: 'NT',
-    abbreviations: ['2 Jn', '2Jn', '2 Jhn', '2Jhn', 'II John', 'II Jn', 'Second John'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: '3 John',
     code: '3JN',
     testament: 'NT',
-    abbreviations: ['3 Jn', '3Jn', '3 Jhn', '3Jhn', 'III John', 'III Jn', 'Third John'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'Jude',
     code: 'JUD',
     testament: 'NT',
-    abbreviations: ['Jud', 'Jd'],
+    abbreviations: [],
     alternateNames: []
   },
   {
     name: 'Revelation',
     code: 'REV',
     testament: 'NT',
-    abbreviations: ['Rev', 'Re', 'The Revelation'],
-    alternateNames: ['Apocalypse', 'The Apocalypse']
+    abbreviations: ['Rev'],
+    alternateNames: []
   }
 ];
 
