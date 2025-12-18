@@ -163,8 +163,8 @@ export class YouVersionClient {
       // Handle abort/timeout
       if (error instanceof Error && error.name === 'AbortError') {
         throw new ApiError(
-          `Request timed out after ${this.config.timeout}ms`,
-          undefined,
+          "Request timed out. Try again in a few seconds.",
+          408,
           error
         );
       }
