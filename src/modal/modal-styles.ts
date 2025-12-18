@@ -16,7 +16,8 @@ export const MODAL_BASE_STYLES = `
   max-width: var(--vt-modalMaxWidth);
   min-width: 280px;
   width: 90vw;
-  max-height: 80vh;
+  /* Constrain to 80vh or full viewport minus padding, whichever is smaller (JS+CSS dual constraint) */
+  max-height: min(80vh, calc(100vh - 32px));
   overflow-y: auto;
   overflow-x: visible; /* Allow bridge to extend outside */
   opacity: 0;

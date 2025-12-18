@@ -250,6 +250,15 @@ export class ModalManager {
     // Render content using callback
     this.renderCallback(this.containerElement, content);
 
+    // Reposition modal now that actual content is rendered (height may have changed)
+    if (this.currentTarget) {
+      this.position(this.currentTarget);
+      // Update bridge position as well
+      if (this.bridgeElement && this.bridgeElement.style.display === 'block') {
+        this.positionBridge(this.currentTarget);
+      }
+    }
+
     // Announce to screen readers
     if (this.config.accessibility.announceToScreenReaders) {
       this.announce(`Loaded ${content.reference}`);
@@ -277,6 +286,15 @@ export class ModalManager {
       <p class="versetagger-error-message">${this.escapeHtml(message)}</p>
     `;
     this.containerElement.appendChild(errorEl);
+
+    // Reposition modal now that error content is rendered
+    if (this.currentTarget) {
+      this.position(this.currentTarget);
+      // Update bridge position as well
+      if (this.bridgeElement && this.bridgeElement.style.display === 'block') {
+        this.positionBridge(this.currentTarget);
+      }
+    }
 
     // Announce to screen readers
     if (this.config.accessibility.announceToScreenReaders) {
@@ -335,24 +353,62 @@ export class ModalManager {
 
     const spacing = 8; // Pixels between target and modal
     const horizontalPadding = 16; // Minimum padding from viewport edge
+    const verticalPadding = 16; // Minimum padding from viewport edge
 
     let placement: 'above' | 'below' = 'below';
     let top = 0;
     let left = 0;
 
-    // Calculate vertical position
-    const spaceBelow = viewportHeight - targetRect.bottom;
-    const spaceAbove = targetRect.top;
+    // Calculate vertical position with viewport padding
+    const spaceBelow = viewportHeight - targetRect.bottom - verticalPadding;
+    const spaceAbove = targetRect.top - verticalPadding;
+    const modalWithSpacing = modalRect.height + spacing;
 
-    // Prefer below, but use above if not enough space below
-    if (spaceBelow >= modalRect.height + spacing || spaceBelow >= spaceAbove) {
-      // Position below
+    // Determine placement based on where modal actually fits
+    if (spaceBelow >= modalWithSpacing) {
+      // Fits comfortably below
+      placement = 'below';
+      top = targetRect.bottom + spacing + window.scrollY;
+    } else if (spaceAbove >= modalWithSpacing) {
+      // Fits comfortably above
+      placement = 'above';
+      top = targetRect.top - modalRect.height - spacing + window.scrollY;
+    } else if (spaceBelow > spaceAbove) {
+      // Doesn't fit either place, but more space below
       placement = 'below';
       top = targetRect.bottom + spacing + window.scrollY;
     } else {
-      // Position above
+      // Doesn't fit either place, but more space above
       placement = 'above';
       top = targetRect.top - modalRect.height - spacing + window.scrollY;
+    }
+
+    // Constrain modal to viewport bounds (prevent bottom overflow)
+    const modalBottom = top - window.scrollY + modalRect.height;
+    const maxBottom = viewportHeight - verticalPadding;
+
+    if (modalBottom > maxBottom) {
+      // Modal overflows bottom - shift it up
+      const overflow = modalBottom - maxBottom;
+      top -= overflow;
+
+      // Ensure we don't push it above viewport top
+      const minTop = verticalPadding + window.scrollY;
+      if (top < minTop) {
+        top = minTop;
+        // CSS max-height: 80vh and overflow-y: auto will handle scrolling
+      }
+    }
+
+    // Ensure target element remains visible after constraining
+    const modalTop = top - window.scrollY;
+    const modalBottomViewport = modalTop + modalRect.height;
+
+    if (placement === 'above' && modalBottomViewport > targetRect.top - spacing) {
+      // Modal was pushed down and now covers the target
+      // Shift it up to maintain spacing, even if it clips top
+      const targetTop = targetRect.top - spacing;
+      top = targetTop - modalRect.height + window.scrollY;
     }
 
     // Calculate horizontal position (center on target, but prevent overflow)
