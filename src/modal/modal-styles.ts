@@ -171,7 +171,6 @@ export const MODAL_BASE_STYLES = `
 
 .versetagger-youversion-link:hover {
   color: var(--vt-linkHoverColor);
-  text-decoration: underline;
 }
 
 .versetagger-youversion-link:focus {
