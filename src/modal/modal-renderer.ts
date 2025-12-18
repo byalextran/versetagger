@@ -5,7 +5,7 @@
 
 import type { VerseContent } from '../api/youversion-client';
 import type { VersetaggerConfig } from '../core/config';
-import { sanitizeHtml, createSafeLink, createTextNode } from '../utils/sanitizer';
+import { createSafeLink, createTextNode } from '../utils/sanitizer';
 
 /**
  * Render verse content into modal container
@@ -42,9 +42,8 @@ export function renderVerseContent(
   const contentText = document.createElement('p');
   contentText.className = 'versetagger-content-text';
 
-  // Sanitize the text to prevent XSS
-  const sanitizedText = sanitizeHtml(content.content);
-  contentText.innerHTML = sanitizedText;
+  // Set plain text content directly (API returns plain text, not HTML)
+  contentText.textContent = content.content;
 
   contentContainer.appendChild(contentText);
   container.appendChild(contentContainer);

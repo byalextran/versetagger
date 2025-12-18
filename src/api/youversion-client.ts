@@ -126,6 +126,8 @@ export class YouVersionClient {
         signal: controller.signal
       });
 
+      console.log(response);
+
       clearTimeout(timeoutId);
 
       // Handle HTTP errors
