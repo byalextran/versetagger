@@ -123,6 +123,20 @@ class ApiError extends Error {
 }
 
 /**
+ * Map common Bible version abbreviations to YouVersion bible_id
+ * Default is 206 (NIV) as per API documentation
+ */
+const VERSION_MAP: Record<string, number> = {
+  'NIV': 111,
+  'KJV': 1,
+  'ESV': 59,
+  'NLT': 116,
+  'NKJV': 114,
+  'NASB': 100,
+  // Add more versions as needed
+};
+
+/**
  * Fetch verse data from YouVersion API
  */
 async function fetchFromYouVersion(
@@ -134,17 +148,16 @@ async function fetchFromYouVersion(
   },
   env: Env
 ): Promise<any> {
-  // Build YouVersion API URL
-  // Note: This is a placeholder. You'll need to adjust based on actual YouVersion API endpoints
-  // The actual API endpoint structure depends on YouVersion's API documentation
+  // Get bible_id from version map (default to NIV if not found)
+  const bibleId = VERSION_MAP[params.version.toUpperCase()] || VERSION_MAP['NIV'];
 
-  // Construct the API request URL based on YouVersion's actual API structure
-  // This is an example format - adjust according to actual API docs
-  const verseQuery = params.verses
+  // Build passage_id in USFM format (e.g., "JHN.3.16" or "GEN.1" for whole chapter)
+  const passageId = params.verses
     ? `${params.book}.${params.chapter}.${params.verses}`
     : `${params.book}.${params.chapter}`;
 
-  const apiUrl = `${env.YOUVERSION_API_BASE_URL}/verses?reference=${verseQuery}&version=${params.version}`;
+  // Construct YouVersion API URL: /v1/bibles/{bible_id}/passages/{passage_id}
+  const apiUrl = `${env.YOUVERSION_API_BASE_URL}/v1/bibles/${bibleId}/passages/${passageId}`;
 
   try {
     const response = await fetch(apiUrl, {
@@ -180,9 +193,9 @@ async function fetchFromYouVersion(
 
     const data = await response.json();
 
-    // Transform YouVersion API response to normalized format
-    // This transformation depends on the actual YouVersion API response structure
-    return normalizeYouVersionResponse(data, params);
+    // Return YouVersion API response as-is
+    // VerseTagger will use the 'content' field directly
+    return data;
 
   } catch (error) {
     if (error instanceof ApiError) {
@@ -195,71 +208,6 @@ async function fetchFromYouVersion(
 
     throw new ApiError('Error fetching from YouVersion API', 500);
   }
-}
-
-/**
- * Normalize YouVersion API response to consistent format
- */
-function normalizeYouVersionResponse(
-  data: any,
-  params: {
-    book: string | null;
-    chapter: string | null;
-    verses: string | null;
-    version: string;
-  }
-): any {
-  // This function transforms the YouVersion API response into the format
-  // expected by the VerseTagger client.
-  //
-  // Expected output format:
-  // {
-  //   verses: [
-  //     { number: 1, text: "In the beginning..." },
-  //     { number: 2, text: "And the earth was..." }
-  //   ],
-  //   reference: "Genesis 1:1-2",
-  //   version: "NIV"
-  // }
-
-  // Example transformation (adjust based on actual YouVersion API structure):
-  if (!data || !data.verses) {
-    throw new ApiError('Invalid response from YouVersion API', 502);
-  }
-
-  const verses = Array.isArray(data.verses)
-    ? data.verses.map((v: any) => ({
-        number: v.verse_number || v.number,
-        text: v.text || v.content || ''
-      }))
-    : [];
-
-  if (verses.length === 0) {
-    throw new ApiError('No verses found in API response', 404);
-  }
-
-  return {
-    verses,
-    reference: data.reference || buildReference(params),
-    version: data.version || params.version
-  };
-}
-
-/**
- * Build reference string from parameters
- */
-function buildReference(params: {
-  book: string | null;
-  chapter: string | null;
-  verses: string | null;
-  version: string;
-}): string {
-  let ref = `${params.book} ${params.chapter}`;
-  if (params.verses) {
-    ref += `:${params.verses}`;
-  }
-  ref += ` ${params.version}`;
-  return ref;
 }
 
 /**
