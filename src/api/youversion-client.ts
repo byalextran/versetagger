@@ -21,6 +21,8 @@ export interface VerseContent {
   version: string;
   /** Human-readable reference (e.g., "John 3:16") */
   reference: string;
+  /** Flag indicating this is an error message (for styling) */
+  isError?: boolean;
 }
 
 /**

@@ -53,11 +53,6 @@ export const MODAL_BASE_STYLES = `
   /* Dimensions set via JS based on modal position */
 }
 
-/* Modal Content Container */
-.versetagger-modal-content {
-  /* Padding now applied to .versetagger-modal */
-}
-
 /* Close Button */
 .versetagger-modal-close {
   position: absolute;
@@ -150,6 +145,19 @@ export const MODAL_BASE_STYLES = `
 .versetagger-verse-text {
   flex: 1;
   color: var(--vt-textSecondary);
+}
+
+/* Content Text (for plain text display) */
+.versetagger-content-text {
+  margin: 0 0 16px 0;
+  color: var(--vt-textSecondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Content Text (error state) */
+.versetagger-content-text.versetagger-content-error {
+  color: var(--vt-errorText);
 }
 
 /* Footer */

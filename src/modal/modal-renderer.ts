@@ -42,6 +42,11 @@ export function renderVerseContent(
   const contentText = document.createElement('p');
   contentText.className = 'versetagger-content-text';
 
+  // Apply error styling if this is an error message
+  if (content.isError) {
+    contentText.classList.add('versetagger-content-error');
+  }
+
   // Set plain text content directly (API returns plain text, not HTML)
   contentText.textContent = content.content;
 

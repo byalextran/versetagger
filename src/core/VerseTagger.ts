@@ -13,6 +13,7 @@ import { EventHandler } from '../modal/event-handler';
 import { renderVerseContent } from '../modal/modal-renderer';
 import { ThemeManager } from '../theming/theme-manager';
 import type { Theme } from '../theming/preset-themes';
+import { findVersion } from '../parser/bible-versions';
 
 /**
  * Main VerseTagger class
@@ -278,8 +279,33 @@ export class VerseTagger {
       return;
     }
 
+    // Determine which version to use
+    const requestedVersion = version || this.config.defaultVersion;
+
+    // Check if the version is licensed
+    const versionInfo = findVersion(requestedVersion);
+    if (versionInfo && !versionInfo.licensed) {
+      // Show modal but display licensing message instead of making API call
+      this.modalManager.showLoading(element);
+
+      // Create a licensing message content
+      const licensingContent: VerseContent = {
+        book: book,
+        chapter: parseInt(chapter),
+        verses: verses || '',
+        reference: `${book} ${chapter}${verses ? ':' + verses : ''}`,
+        version: requestedVersion,
+        content: "This Bible version isn't available to view here due to licensing restrictions.",
+        isError: true
+      };
+
+      // Show the licensing message
+      this.modalManager.showContent(licensingContent);
+      return;
+    }
+
     // Build cache key
-    const cacheKey = this.buildCacheKey(book, parseInt(chapter), verses || '', version || this.config.defaultVersion);
+    const cacheKey = this.buildCacheKey(book, parseInt(chapter), verses || '', requestedVersion);
 
     // Show loading state
     this.modalManager.showLoading(element);
@@ -324,7 +350,18 @@ export class VerseTagger {
         errorMessage = error.message;
       }
 
-      this.modalManager.showError(errorMessage);
+      // Create error content with the same structure as licensing errors
+      const errorContent: VerseContent = {
+        book: book,
+        chapter: parseInt(chapter),
+        verses: verses || '',
+        reference: `${book} ${chapter}${verses ? ':' + verses : ''}`,
+        version: requestedVersion,
+        content: errorMessage,
+        isError: true
+      };
+
+      this.modalManager.showContent(errorContent);
     }
   }
 
