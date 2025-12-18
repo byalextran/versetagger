@@ -54,7 +54,7 @@ function buildReferencePattern(): RegExp {
   //   Matt 6:33 NIV
   // Note: Verse numbers are required (chapter-only references are not matched)
   referencePattern = new RegExp(
-    `\\b(${bookPattern})\\s+(\\d+):(\\d+(?:[–—-]\\d+)?(?:,\\s*\\d+(?:[–—-]\\d+)?)*)(?:\\s+(${translationPattern}))?\\b`,
+    `\\b(${bookPattern})\\s+(\\d{1,3}):(\\d{1,3}(?:[–—-]\\d{1,3})?(?:,\\s*\\d{1,3}(?:[–—-]\\d{1,3})?)*)(?:\\s+(${translationPattern}))?\\b`,
     'gi'
   );
 
