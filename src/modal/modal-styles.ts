@@ -216,9 +216,6 @@ export const MODAL_BASE_STYLES = `
   align-items: flex-start;
   gap: 12px;
   padding: 16px;
-  background: var(--vt-errorBackground);
-  border: 1px solid var(--vt-modalBorder);
-  border-radius: 6px;
 }
 
 .versetagger-error-icon {

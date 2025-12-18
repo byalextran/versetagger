@@ -274,7 +274,6 @@ export class ModalManager {
     errorEl.className = 'versetagger-modal-error';
     errorEl.setAttribute('role', 'alert');
     errorEl.innerHTML = `
-      <span class="versetagger-error-icon">⚠️</span>
       <p class="versetagger-error-message">${this.escapeHtml(message)}</p>
     `;
     this.containerElement.appendChild(errorEl);
