@@ -224,6 +224,22 @@ export class DOMScanner {
           }
           return NodeFilter.FILTER_REJECT;
         }
+
+        // Skip contenteditable elements
+        if (element.getAttribute('contenteditable') === 'true') {
+          if (this.config.debug) {
+            console.log(`${debugPrefix} REJECT - Element has contenteditable="true": <${element.tagName.toLowerCase()}>`);
+          }
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        // Skip aria-hidden elements
+        if (element.getAttribute('aria-hidden') === 'true') {
+          if (this.config.debug) {
+            console.log(`${debugPrefix} REJECT - Element has aria-hidden="true": <${element.tagName.toLowerCase()}>`);
+          }
+          return NodeFilter.FILTER_REJECT;
+        }
       }
 
       // Skip element nodes themselves but continue traversing their children

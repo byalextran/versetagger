@@ -123,7 +123,7 @@ export const DEFAULT_CONFIG: Required<VersetaggerConfig> = {
   trigger: 'hover',
   hoverDelay: 500,
   autoScan: true,
-  excludeSelectors: 'code, pre, script, style, .no-verse-tagging',
+  excludeSelectors: 'code, pre, script, style, head, meta, title, link, noscript, svg, canvas, iframe, video, select, option, button, a, .no-verse-tagging',
   defaultVersion: 'NIV',
   colorScheme: 'auto',
   theme: 'default',
