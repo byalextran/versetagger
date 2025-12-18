@@ -451,8 +451,8 @@ export class ModalManager {
     const placement = this.modalElement.getAttribute('data-placement');
 
     if (placement === 'below') {
-      // Modal is below trigger - bridge covers trigger height + gap to modal
-      const bridgeTop = targetRect.top + window.scrollY;
+      // Modal is below trigger - bridge covers ONLY the gap between trigger bottom and modal top
+      const bridgeTop = targetRect.bottom + window.scrollY;
       const bridgeHeight = (modalRect.top + window.scrollY) - bridgeTop;
       const bridgeLeft = Math.min(targetRect.left, modalRect.left);
       const bridgeWidth = Math.max(targetRect.right, modalRect.right) - bridgeLeft;
@@ -462,9 +462,9 @@ export class ModalManager {
       this.bridgeElement.style.width = `${bridgeWidth}px`;
       this.bridgeElement.style.height = `${bridgeHeight}px`;
     } else {
-      // Modal is above trigger - bridge covers trigger height + gap to modal
+      // Modal is above trigger - bridge covers ONLY the gap between modal bottom and trigger top
       const bridgeTop = modalRect.bottom + window.scrollY;
-      const bridgeHeight = (targetRect.bottom + window.scrollY) - bridgeTop;
+      const bridgeHeight = (targetRect.top + window.scrollY) - bridgeTop;
       const bridgeLeft = Math.min(targetRect.left, modalRect.left);
       const bridgeWidth = Math.max(targetRect.right, modalRect.right) - bridgeLeft;
 
