@@ -4,6 +4,7 @@
  */
 
 import type { ScriptureReference } from '../parser/reference-parser';
+import { findBook } from '../parser/book-mappings';
 
 /**
  * Verse content from API
@@ -253,6 +254,22 @@ export class YouVersionClient {
       throw new ApiError(`Invalid API response: Expected 'content' field with verse text. Got: ${JSON.stringify(data)}`);
     }
 
+    // Format the reference for display
+    let displayReference: string;
+    if (data.reference) {
+      // API provided a reference, but it might use book codes - replace with full name
+      const bookInfo = findBook(reference.book);
+      if (bookInfo) {
+        // Replace the book code with the full book name in the API's reference
+        displayReference = data.reference.replace(new RegExp(`^${reference.book}\\b`), bookInfo.name);
+      } else {
+        displayReference = data.reference;
+      }
+    } else {
+      // Format our own reference
+      displayReference = this.formatReference(reference, version);
+    }
+
     // Return the content directly without wrapping in verse objects
     return {
       book: reference.book,
@@ -260,7 +277,7 @@ export class YouVersionClient {
       content: data.content,
       verses: reference.verses,
       version: version, // Use the requested version, not the API's version
-      reference: data.reference || this.formatReference(reference, version)
+      reference: displayReference
     };
   }
 
@@ -268,7 +285,11 @@ export class YouVersionClient {
    * Format reference for display if not provided by API
    */
   private formatReference(ref: ScriptureReference, version: string): string {
-    let result = `${ref.book} ${ref.chapter}`;
+    // Get full book name for display
+    const bookInfo = findBook(ref.book);
+    const displayBookName = bookInfo ? bookInfo.name : ref.book;
+
+    let result = `${displayBookName} ${ref.chapter}`;
 
     if (ref.verses) {
       result += `:${ref.verses}`;

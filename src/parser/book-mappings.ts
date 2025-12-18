@@ -490,6 +490,9 @@ export function buildBookLookup(): Map<string, BookMapping> {
     // Add full name
     lookup.set(normalizeBookName(book.name), book);
 
+    // Add book code (e.g., "GEN", "PRO", "JER")
+    lookup.set(normalizeBookName(book.code), book);
+
     // Add all abbreviations
     for (const abbr of book.abbreviations) {
       lookup.set(normalizeBookName(abbr), book);

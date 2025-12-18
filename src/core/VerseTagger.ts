@@ -14,6 +14,7 @@ import { renderVerseContent } from '../modal/modal-renderer';
 import { ThemeManager } from '../theming/theme-manager';
 import type { Theme } from '../theming/preset-themes';
 import { findVersion } from '../parser/bible-versions';
+import { findBook } from '../parser/book-mappings';
 
 /**
  * Main VerseTagger class
@@ -288,12 +289,16 @@ export class VerseTagger {
       // Show modal but display licensing message instead of making API call
       this.modalManager.showLoading(element);
 
+      // Get full book name for display
+      const bookInfo = findBook(book);
+      const displayBookName = bookInfo ? bookInfo.name : book;
+
       // Create a licensing message content
       const licensingContent: VerseContent = {
         book: book,
         chapter: parseInt(chapter),
         verses: verses || '',
-        reference: `${book} ${chapter}${verses ? ':' + verses : ''}`,
+        reference: `${displayBookName} ${chapter}${verses ? ':' + verses : ''}`,
         version: requestedVersion,
         content: "This Bible version isn't available to view here due to licensing restrictions.",
         isError: true
@@ -351,11 +356,15 @@ export class VerseTagger {
       }
 
       // Create error content with the same structure as licensing errors
+      // Get full book name for display
+      const bookInfo = findBook(book);
+      const displayBookName = bookInfo ? bookInfo.name : book;
+
       const errorContent: VerseContent = {
         book: book,
         chapter: parseInt(chapter),
         verses: verses || '',
-        reference: `${book} ${chapter}${verses ? ':' + verses : ''}`,
+        reference: `${displayBookName} ${chapter}${verses ? ':' + verses : ''}`,
         version: requestedVersion,
         content: errorMessage,
         isError: true
