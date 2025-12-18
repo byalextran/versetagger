@@ -160,16 +160,16 @@ VerseTagger automatically detects various scripture reference formats:
   </p>
 
   <p>
-    I also love reading Psalm 23, especially verses 1-3. The passage
+    I also love reading Psalm 23:1-6, especially verses 1-3. The passage
     in Matthew 5:1-12 ESV is powerful too.
   </p>
 </article>
 ```
 
 VerseTagger will detect:
-- Simple references: `John 3:16`, `Psalm 23`
+- Simple references: `John 3:16`, `Romans 5:8`
 - Verse ranges: `Romans 8:28-30`, `Genesis 1:1-3`
-- Multiple verses: `Psalm 23:1-3`
+- Multiple verses: `Psalm 23:1-6`, `Matthew 5:1-12`
 - Version suffixes: `Matthew 6:33 NIV`, `John 1:1 ESV`
 - Books with numbers: `1 John 2:1`, `2 Corinthians 5:17`
 - Abbreviations: `Matt 5:5`, `Gen 1:1`, `Ps 119:105`

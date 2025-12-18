@@ -310,7 +310,7 @@ versetagger/
    - Runtime config updates
 
 4. **Testing**: Unit tests for parser with edge cases
-   - "John 3:16", "1 John 2:1-5", "Psalm 23", "Matt 6:33 NIV"
+   - "John 3:16", "1 John 2:1-5", "Psalm 23:1-6", "Matt 6:33 NIV"
    - Roman numerals, multiple spaces, em-dashes
    - Invalid references should be ignored
 

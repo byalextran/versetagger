@@ -68,9 +68,9 @@ export default {
       };
 
       // Validate required parameters
-      if (!params.book || !params.chapter) {
+      if (!params.book || !params.chapter || !params.verses) {
         return jsonResponse(
-          { error: 'Missing required parameters: book and chapter are required' },
+          { error: 'Missing required parameters: book, chapter, and verses are required' },
           { status: 400, headers: CORS_HEADERS }
         );
       }
@@ -127,7 +127,7 @@ class ApiError extends Error {
  * Default is 206 (NIV) as per API documentation
  */
 const VERSION_MAP: Record<string, number> = {
-  'NIV': 111,
+  'NIV': 206,
   'KJV': 1,
   'ESV': 59,
   'NLT': 116,
@@ -151,10 +151,9 @@ async function fetchFromYouVersion(
   // Get bible_id from version map (default to NIV if not found)
   const bibleId = VERSION_MAP[params.version.toUpperCase()] || VERSION_MAP['NIV'];
 
-  // Build passage_id in USFM format (e.g., "JHN.3.16" or "GEN.1" for whole chapter)
-  const passageId = params.verses
-    ? `${params.book}.${params.chapter}.${params.verses}`
-    : `${params.book}.${params.chapter}`;
+  // Build passage_id in USFM format (e.g., "JHN.3.16" for John 3:16)
+  // Verses are required - chapter-only references are not supported
+  const passageId = `${params.book}.${params.chapter}.${params.verses}`;
 
   // Construct YouVersion API URL: /v1/bibles/{bible_id}/passages/{passage_id}
   const apiUrl = `${env.YOUVERSION_API_BASE_URL}/v1/bibles/${bibleId}/passages/${passageId}`;

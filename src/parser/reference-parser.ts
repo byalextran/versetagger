@@ -53,14 +53,15 @@ function buildReferencePattern(): RegExp {
     .join('|');
 
   // Build the complete pattern
-  // Format: <book> <chapter>(:<verses>)? (<version>)?
+  // Format: <book> <chapter>:<verses> (<version>)?
   // Examples:
   //   John 3:16
   //   1 John 2:1-5
-  //   Psalm 23
+  //   Matthew 5:1-10,12-15
   //   Matt 6:33 NIV
+  // Note: Verse numbers are required (chapter-only references are not matched)
   referencePattern = new RegExp(
-    `\\b(${bookPattern})\\s+(\\d+)(?::(\\d+(?:[–—-]\\d+)?(?:,\\s*\\d+(?:[–—-]\\d+)?)*))?(?:\\s+([A-Z]{2,5}))?\\b`,
+    `\\b(${bookPattern})\\s+(\\d+):(\\d+(?:[–—-]\\d+)?(?:,\\s*\\d+(?:[–—-]\\d+)?)*)(?:\\s+([A-Z]{2,5}))?\\b`,
     'gi'
   );
 
@@ -92,13 +93,10 @@ export function parseReferences(text: string): ScriptureReference[] {
       continue; // Skip invalid chapter
     }
 
-    // Parse verses if present
-    let verses: number[] = [];
-    if (versesStr) {
-      verses = expandVerseRange(versesStr);
-      if (verses.length === 0) {
-        continue; // Skip if verse range is invalid
-      }
+    // Parse verses (required in the regex pattern)
+    const verses = expandVerseRange(versesStr);
+    if (verses.length === 0) {
+      continue; // Skip if verse range is invalid
     }
 
     references.push({

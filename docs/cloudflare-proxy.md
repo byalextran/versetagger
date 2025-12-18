@@ -191,7 +191,7 @@ const versetagger = new VerseTagger({
 **Query Parameters:**
 - `book` (required): Book code (e.g., "GEN", "JHN", "MAT")
 - `chapter` (required): Chapter number
-- `verses` (optional): Comma-separated verse numbers (e.g., "16" or "1,2,3")
+- `verses` (required): Comma-separated verse numbers (e.g., "16" or "1,2,3")
 - `version` (optional): Bible version (default: "NIV")
 
 **Example:**

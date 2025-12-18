@@ -4,7 +4,7 @@ A lightweight, pure TypeScript library that automatically detects Bible referenc
 
 ## Features
 
-- **Automatic Detection**: Scans your page for scripture references like "John 3:16", "Genesis 1:1-3", or "Psalm 23 NIV"
+- **Automatic Detection**: Scans your page for scripture references like "John 3:16", "Genesis 1:1-3", or "Psalm 23:1 NIV"
 - **Elegant Modals**: Displays verse content in beautiful, accessible modals on hover or click
 - **Highly Customizable**: Configure behavior, triggers, themes, and more
 - **Light & Dark Themes**: Built-in themes with automatic system preference detection
@@ -55,7 +55,7 @@ Add scripture references to your HTML:
 
 ```html
 <p>
-  My favorite verse is John 3:16. I also love reading Psalm 23
+  My favorite verse is John 3:16. I also love reading Psalm 23:1-6
   and Romans 8:28-30 ESV.
 </p>
 ```
