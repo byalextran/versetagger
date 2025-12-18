@@ -94,11 +94,10 @@ export const MODAL_BASE_STYLES = `
 .versetagger-modal-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   margin-bottom: 16px;
   padding-right: 32px; /* Make room for close button */
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .versetagger-modal-reference {
@@ -106,7 +105,7 @@ export const MODAL_BASE_STYLES = `
   font-size: 18px;
   font-weight: 600;
   color: var(--vt-textPrimary);
-  flex: 1;
+  flex-shrink: 1;
   min-width: 0;
 }
 
@@ -119,6 +118,7 @@ export const MODAL_BASE_STYLES = `
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Verses Container */
