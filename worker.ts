@@ -156,13 +156,13 @@ async function fetchFromYouVersion(
   const passageId = `${params.book}.${params.chapter}.${params.verses}`;
 
   // Construct YouVersion API URL: /v1/bibles/{bible_id}/passages/{passage_id}
-  const apiUrl = `${env.YOUVERSION_API_BASE_URL}/v1/bibles/${bibleId}/passages/${passageId}`;
+  const apiUrl = `${env.YOUVERSION_API_BASE_URL}/bibles/${bibleId}/passages/${passageId}`;
 
   try {
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${env.YOUVERSION_API_KEY}`,
+        'X-YVP-App-Key': `${env.YOUVERSION_API_KEY}`,
         'Accept': 'application/json',
         'User-Agent': 'VerseTagger-Proxy/1.0'
       }
