@@ -539,3 +539,21 @@ export function getAllBookNames(): string[] {
 
   return names;
 }
+
+/**
+ * Get regex pattern for matching book names
+ * Returns a pattern that matches all book names, abbreviations, and alternate names
+ * Pattern is sorted by length (longest first) to ensure proper matching
+ */
+export function getBookNamesRegex(): string {
+  const names = getAllBookNames();
+
+  // Sort by length (longest first) to match longer names before shorter ones
+  // This ensures "1 Corinthians" matches before "1 Cor"
+  names.sort((a, b) => b.length - a.length);
+
+  // Escape special regex characters and join with |
+  return names
+    .map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('|');
+}

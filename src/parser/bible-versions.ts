@@ -94,7 +94,7 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
   {
     id: 478,
     abbreviation: 'DARBY',
-    title: 'Darby\'s Translation 1890'
+    title: "Darby's Translation 1890"
   },
   {
     id: 55,
@@ -164,7 +164,7 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
   {
     id: 70,
     abbreviation: 'GW',
-    title: 'GOD\'S WORD'
+    title: "GOD'S WORD"
   },
   {
     id: 1047,
@@ -179,7 +179,7 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
   {
     id: 1359,
     abbreviation: 'ICB',
-    title: 'International Children's Bible'
+    title: "International Children's Bible"
   },
   {
     id: 1077,
@@ -274,7 +274,7 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
   {
     id: 110,
     abbreviation: 'NIRV',
-    title: 'New International Reader's Version'
+    title: "New International Reader's Version"
   },
   {
     id: 111,
@@ -404,7 +404,7 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
   {
     id: 2407,
     abbreviation: 'WBMS',
-    title: 'Wycliffe\'s Bible with Modern Spelling'
+    title: "Wycliffe's Bible with Modern Spelling"
   },
   {
     id: 4533,
@@ -419,7 +419,7 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
   {
     id: 206,
     abbreviation: 'WEBUS',
-    title: 'World English Bible, American English Edition, without Strong\'s Numbers'
+    title: "World English Bible, American English Edition, without Strong's Numbers"
   },
   {
     id: 1209,
@@ -434,12 +434,12 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
   {
     id: 4108,
     abbreviation: 'YALL',
-    title: 'Y\'all Version Bible'
+    title: "Y'all Version Bible"
   },
   {
     id: 821,
     abbreviation: 'YLT98',
-    title: 'Young\'s Literal Translation 1898'
+    title: "Young's Literal Translation 1898"
   }
 ];
 
@@ -467,4 +467,21 @@ const versionLookup = buildVersionLookup();
  */
 export function findVersion(abbreviation: string): BibleVersion | undefined {
   return versionLookup.get(abbreviation.toUpperCase());
+}
+
+/**
+ * Get regex pattern for matching Bible version abbreviations
+ * Returns a pattern that matches all valid translation abbreviations
+ * Pattern is sorted by length (longest first) to ensure proper matching
+ */
+export function getTranslationsRegex(): string {
+  const abbreviations = BIBLE_VERSIONS.map(v => v.abbreviation);
+
+  // Sort by length (longest first) to match longer abbreviations before shorter ones
+  abbreviations.sort((a, b) => b.length - a.length);
+
+  // Escape special regex characters and join with |
+  return abbreviations
+    .map(abbr => abbr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('|');
 }

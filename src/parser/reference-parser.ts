@@ -3,8 +3,9 @@
  * Parses scripture references from text and extracts structured data
  */
 
-import { findBook, getAllBookNames } from './book-mappings';
+import { findBook, getBookNamesRegex } from './book-mappings';
 import { expandVerseRange } from './range-expander';
+import { getTranslationsRegex } from './bible-versions';
 
 export interface ScriptureReference {
   /** Original matched text */
@@ -40,17 +41,9 @@ function buildReferencePattern(): RegExp {
     return referencePattern;
   }
 
-  // Get all book names and escape them for regex
-  const bookNames = getAllBookNames();
-
-  // Sort by length (longest first) to match longer names before shorter ones
-  // This ensures "1 Corinthians" matches before "1 Cor"
-  bookNames.sort((a, b) => b.length - a.length);
-
-  // Escape special regex characters and join with |
-  const bookPattern = bookNames
-    .map(name => name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-    .join('|');
+  // Get regex patterns from respective modules
+  const bookPattern = getBookNamesRegex();
+  const translationPattern = getTranslationsRegex();
 
   // Build the complete pattern
   // Format: <book> <chapter>:<verses> (<version>)?
@@ -61,7 +54,7 @@ function buildReferencePattern(): RegExp {
   //   Matt 6:33 NIV
   // Note: Verse numbers are required (chapter-only references are not matched)
   referencePattern = new RegExp(
-    `\\b(${bookPattern})\\s+(\\d+):(\\d+(?:[–—-]\\d+)?(?:,\\s*\\d+(?:[–—-]\\d+)?)*)(?:\\s+([A-Z]{2,5}))?\\b`,
+    `\\b(${bookPattern})\\s+(\\d+):(\\d+(?:[–—-]\\d+)?(?:,\\s*\\d+(?:[–—-]\\d+)?)*)(?:\\s+(${translationPattern}))?\\b`,
     'gi'
   );
 
