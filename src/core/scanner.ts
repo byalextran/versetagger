@@ -53,6 +53,15 @@ export class DOMScanner {
     // Collect all text nodes first to avoid DOM modification during traversal
     while ((currentNode = walker.nextNode())) {
       textNodesToProcess.push(currentNode as Text);
+      if (this.config.debug) {
+        const preview = (currentNode.textContent || '').substring(0, 50).replace(/\n/g, ' ');
+        const parentTag = (currentNode.parentElement?.tagName || 'none').toLowerCase();
+        console.log(`VerseTagger: [TreeWalker] Found text node in <${parentTag}>: "${preview}${preview.length >= 50 ? '...' : ''}"`);
+      }
+    }
+
+    if (this.config.debug) {
+      console.log(`VerseTagger: [TreeWalker] Collected ${textNodesToProcess.length} text nodes to process`);
     }
 
     // Process each text node
@@ -72,19 +81,30 @@ export class DOMScanner {
    * Determine if a node should be scanned
    */
   private shouldScanNode(node: Node): number {
+    const debugPrefix = 'VerseTagger: [shouldScanNode]';
+
     // Skip if already scanned
     if (this.scannedNodes.has(node)) {
+      if (this.config.debug) {
+        console.log(`${debugPrefix} REJECT - Already scanned`);
+      }
       return NodeFilter.FILTER_REJECT;
     }
 
     // Skip if the text is empty or only whitespace
     if (!node.textContent || node.textContent.trim().length === 0) {
+      if (this.config.debug) {
+        console.log(`${debugPrefix} REJECT - Empty or whitespace only`);
+      }
       return NodeFilter.FILTER_REJECT;
     }
 
     // Check if parent matches exclude selectors
     const parent = node.parentElement;
     if (!parent) {
+      if (this.config.debug) {
+        console.log(`${debugPrefix} REJECT - No parent element`);
+      }
       return NodeFilter.FILTER_REJECT;
     }
 
@@ -92,10 +112,16 @@ export class DOMScanner {
     if (this.config.excludeSelectors) {
       try {
         if (parent.matches(this.config.excludeSelectors)) {
+          if (this.config.debug) {
+            console.log(`${debugPrefix} REJECT - Parent matches excludeSelectors`);
+          }
           return NodeFilter.FILTER_REJECT;
         }
         // Also check if any ancestor matches
         if (parent.closest(this.config.excludeSelectors)) {
+          if (this.config.debug) {
+            console.log(`${debugPrefix} REJECT - Ancestor matches excludeSelectors`);
+          }
           return NodeFilter.FILTER_REJECT;
         }
       } catch (e) {
@@ -107,9 +133,15 @@ export class DOMScanner {
 
     // Skip if already inside a verse reference element
     if (parent.closest(`.${this.config.referenceClass}`)) {
+      if (this.config.debug) {
+        console.log(`${debugPrefix} REJECT - Inside existing verse reference`);
+      }
       return NodeFilter.FILTER_REJECT;
     }
 
+    if (this.config.debug) {
+      console.log(`${debugPrefix} ACCEPT`);
+    }
     return NodeFilter.FILTER_ACCEPT;
   }
 
@@ -118,7 +150,20 @@ export class DOMScanner {
    */
   private processTextNode(textNode: Text): ScannedReference[] {
     const text = textNode.textContent || '';
+
+    if (this.config.debug) {
+      const preview = text.substring(0, 100).replace(/\n/g, ' ');
+      console.log(`VerseTagger: [ProcessNode] Text: "${preview}${text.length > 100 ? '...' : ''}"`);
+    }
+
     const references = parseReferences(text);
+
+    if (this.config.debug) {
+      console.log(`VerseTagger: [Regex] Found ${references.length} match(es)`);
+      references.forEach((ref, idx) => {
+        console.log(`VerseTagger: [Match ${idx + 1}] "${ref.text}" -> ${ref.book} ${ref.chapter}:${ref.verses.join(',')}${ref.version ? ' ' + ref.version : ''}`);
+      });
+    }
 
     if (references.length === 0) {
       // Mark as scanned even if no references found
@@ -136,10 +181,24 @@ export class DOMScanner {
     // Process references in reverse order to maintain correct indices
     const sortedRefs = [...references].sort((a, b) => b.startIndex - a.startIndex);
 
-    for (const ref of sortedRefs) {
-      const beforeText = text.substring(0, ref.startIndex);
-      const refText = text.substring(ref.startIndex, ref.endIndex);
-      const afterText = text.substring(ref.endIndex);
+    if (this.config.debug) {
+      console.log(`VerseTagger: [ProcessNode] Processing ${sortedRefs.length} references in reverse order`);
+    }
+
+    // Keep track of the current text node as we split it
+    let currentTextNode: Text = textNode;
+    let currentText = text;
+
+    for (let i = 0; i < sortedRefs.length; i++) {
+      const ref = sortedRefs[i];
+
+      if (this.config.debug) {
+        console.log(`VerseTagger: [ProcessNode] Processing reference ${i + 1}/${sortedRefs.length}: "${ref.text}" at index ${ref.startIndex}-${ref.endIndex}`);
+      }
+
+      const beforeText = currentText.substring(0, ref.startIndex);
+      const refText = currentText.substring(ref.startIndex, ref.endIndex);
+      const afterText = currentText.substring(ref.endIndex);
 
       // Create the wrapper element for the reference
       const element = this.createReferenceElement(ref);
@@ -148,33 +207,45 @@ export class DOMScanner {
       if (ref.startIndex === 0) {
         // Reference is at the start
         const afterNode = document.createTextNode(afterText);
-        parent.insertBefore(element, textNode);
-        parent.insertBefore(afterNode, textNode);
-        parent.removeChild(textNode);
+        parent.insertBefore(element, currentTextNode);
+        parent.insertBefore(afterNode, currentTextNode);
+        parent.removeChild(currentTextNode);
 
         // Mark new nodes as scanned
         this.scannedNodes.add(afterNode);
-      } else if (ref.endIndex === text.length) {
+
+        // Update current node for next iteration (if processing more refs)
+        currentTextNode = afterNode;
+        currentText = afterText;
+      } else if (ref.endIndex === currentText.length) {
         // Reference is at the end
         const beforeNode = document.createTextNode(beforeText);
-        parent.insertBefore(beforeNode, textNode);
-        parent.insertBefore(element, textNode);
-        parent.removeChild(textNode);
+        parent.insertBefore(beforeNode, currentTextNode);
+        parent.insertBefore(element, currentTextNode);
+        parent.removeChild(currentTextNode);
 
         // Mark new nodes as scanned
         this.scannedNodes.add(beforeNode);
+
+        // Update current node for next iteration (if processing more refs)
+        currentTextNode = beforeNode;
+        currentText = beforeText;
       } else {
         // Reference is in the middle
         const beforeNode = document.createTextNode(beforeText);
         const afterNode = document.createTextNode(afterText);
-        parent.insertBefore(beforeNode, textNode);
-        parent.insertBefore(element, textNode);
-        parent.insertBefore(afterNode, textNode);
-        parent.removeChild(textNode);
+        parent.insertBefore(beforeNode, currentTextNode);
+        parent.insertBefore(element, currentTextNode);
+        parent.insertBefore(afterNode, currentTextNode);
+        parent.removeChild(currentTextNode);
 
         // Mark new nodes as scanned
         this.scannedNodes.add(beforeNode);
         this.scannedNodes.add(afterNode);
+
+        // Update current node for next iteration (continue with the before node since we're going in reverse)
+        currentTextNode = beforeNode;
+        currentText = beforeText;
       }
 
       scannedRefs.push({
