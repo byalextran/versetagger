@@ -9,12 +9,5 @@ compatibility_date = "2024-01-01"
 #   DEV: wrangler secret put YOUVERSION_API_KEY
 #   PRODUCTION: wrangler secret put YOUVERSION_API_KEY --env production
 
-# Development environment (use: wrangler dev or wrangler deploy --env dev)
-[env.dev]
-name = "versetagger-proxy-dev"
-vars = { ENVIRONMENT = "dev", YOUVERSION_API_BASE_URL = "https://api-dev.youversion.com/v1" }
-
-# Production environment (use: wrangler deploy --env production)
-[env.production]
-name = "versetagger-proxy-production"
-vars = { ENVIRONMENT = "production", YOUVERSION_API_BASE_URL = "https://api.youversion.com/v1" }
+[vars]
+YOUVERSION_API_BASE_URL = "https://api.youversion.com/v1"
