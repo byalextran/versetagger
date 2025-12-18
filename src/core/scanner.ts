@@ -18,10 +18,66 @@ export interface ScannedReference extends ScriptureReference {
 export class DOMScanner {
   private config: Required<VersetaggerConfig>;
   private scannedNodes: WeakSet<Node>;
+  private excludedTags: Set<string>;
+  private excludedClasses: Set<string>;
+  private excludedIds: Set<string>;
+  private complexExcludeSelectors: string | null;
 
   constructor(config: Required<VersetaggerConfig>) {
     this.config = config;
     this.scannedNodes = new WeakSet();
+
+    // Parse excludeSelectors into optimized lookup structures
+    const { tags, classes, ids, complex } = this.parseExcludeSelectors(config.excludeSelectors);
+    this.excludedTags = tags;
+    this.excludedClasses = classes;
+    this.excludedIds = ids;
+    this.complexExcludeSelectors = complex;
+  }
+
+  /**
+   * Parse excludeSelectors string into optimized lookup structures
+   * Separates simple selectors (tags, classes, IDs) from complex selectors
+   */
+  private parseExcludeSelectors(selectors: string): {
+    tags: Set<string>;
+    classes: Set<string>;
+    ids: Set<string>;
+    complex: string | null;
+  } {
+    const tags = new Set<string>();
+    const classes = new Set<string>();
+    const ids = new Set<string>();
+    const complexSelectors: string[] = [];
+
+    // Split by comma and process each selector
+    const selectorList = selectors.split(',').map(s => s.trim()).filter(s => s);
+
+    for (const selector of selectorList) {
+      // Simple tag selector (e.g., "code", "pre")
+      if (/^[a-z][a-z0-9]*$/i.test(selector)) {
+        tags.add(selector.toUpperCase());
+      }
+      // Simple class selector (e.g., ".no-verse-tagging")
+      else if (/^\.[a-z_-][a-z0-9_-]*$/i.test(selector)) {
+        classes.add(selector.substring(1));
+      }
+      // Simple ID selector (e.g., "#sidebar")
+      else if (/^#[a-z_-][a-z0-9_-]*$/i.test(selector)) {
+        ids.add(selector.substring(1));
+      }
+      // Complex selector (e.g., "div.comment", "[data-foo]", "div > p")
+      else {
+        complexSelectors.push(selector);
+      }
+    }
+
+    return {
+      tags,
+      classes,
+      ids,
+      complex: complexSelectors.length > 0 ? complexSelectors.join(', ') : null
+    };
   }
 
   /**
@@ -39,10 +95,11 @@ export class DOMScanner {
       return references;
     }
 
-    // Use TreeWalker to find all text nodes
+    // Use TreeWalker to find text nodes within element nodes
+    // Element nodes allow us to skip entire subtrees efficiently
     const walker = document.createTreeWalker(
       root,
-      NodeFilter.SHOW_TEXT,
+      NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
       {
         acceptNode: (node) => this.shouldScanNode(node)
       }
@@ -53,11 +110,14 @@ export class DOMScanner {
 
     // Collect all text nodes first to avoid DOM modification during traversal
     while ((currentNode = walker.nextNode())) {
-      textNodesToProcess.push(currentNode as Text);
-      if (this.config.debug) {
-        const preview = (currentNode.textContent || '').substring(0, 50).replace(/\n/g, ' ');
-        const parentTag = (currentNode.parentElement?.tagName || 'none').toLowerCase();
-        console.log(`VerseTagger: [TreeWalker] Found text node in <${parentTag}>: "${preview}${preview.length >= 50 ? '...' : ''}"`);
+      // Only collect text nodes (elements are filtered to skip excluded subtrees)
+      if (currentNode.nodeType === Node.TEXT_NODE) {
+        textNodesToProcess.push(currentNode as Text);
+        if (this.config.debug) {
+          const preview = (currentNode.textContent || '').substring(0, 50).replace(/\n/g, ' ');
+          const parentTag = (currentNode.parentElement?.tagName || 'none').toLowerCase();
+          console.log(`VerseTagger: [TreeWalker] Found text node in <${parentTag}>: "${preview}${preview.length >= 50 ? '...' : ''}"`);
+        }
       }
     }
 
@@ -80,10 +140,98 @@ export class DOMScanner {
 
   /**
    * Determine if a node should be scanned
+   * For element nodes: returns FILTER_REJECT to skip excluded subtrees
+   * For text nodes: returns FILTER_ACCEPT or FILTER_REJECT
    */
   private shouldScanNode(node: Node): number {
     const debugPrefix = 'VerseTagger: [shouldScanNode]';
 
+    // Handle element nodes - check if they should be excluded
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const element = node as Element;
+
+      // Check if this element matches exclude selectors
+      // Optimized: Check Sets first (O(1)), then fall back to matches() for complex selectors
+
+      // Fast path: Check tag name
+      if (this.excludedTags.has(element.tagName)) {
+        if (this.config.debug) {
+          console.log(`${debugPrefix} REJECT - Element tag excluded: <${element.tagName.toLowerCase()}>`);
+        }
+        return NodeFilter.FILTER_REJECT;
+      }
+
+      // Fast path: Check ID
+      if (element.id && this.excludedIds.has(element.id)) {
+        if (this.config.debug) {
+          console.log(`${debugPrefix} REJECT - Element ID excluded: #${element.id}`);
+        }
+        return NodeFilter.FILTER_REJECT;
+      }
+
+      // Fast path: Check classes
+      if (element.classList.length > 0) {
+        for (const className of element.classList) {
+          if (this.excludedClasses.has(className)) {
+            if (this.config.debug) {
+              console.log(`${debugPrefix} REJECT - Element class excluded: .${className}`);
+            }
+            return NodeFilter.FILTER_REJECT;
+          }
+        }
+      }
+
+      // Slow path: Check complex selectors (only if they exist)
+      if (this.complexExcludeSelectors) {
+        try {
+          if (element.matches(this.complexExcludeSelectors)) {
+            if (this.config.debug) {
+              console.log(`${debugPrefix} REJECT - Element matches complex excludeSelectors: <${element.tagName.toLowerCase()}>`);
+            }
+            return NodeFilter.FILTER_REJECT;
+          }
+        } catch (e) {
+          if (this.config.debug) {
+            console.warn('VerseTagger: Invalid excludeSelectors', e);
+          }
+        }
+      }
+
+      // Check if this element is already a verse reference (skip its subtree)
+      if (element.classList.contains(this.config.referenceClass)) {
+        if (this.config.debug) {
+          console.log(`${debugPrefix} REJECT - Element is existing verse reference`);
+        }
+        return NodeFilter.FILTER_REJECT;
+      }
+
+      // Check if element is hidden (skip its entire subtree for better performance)
+      if (element instanceof HTMLElement) {
+        const style = window.getComputedStyle(element);
+
+        // Skip if display is none
+        if (style.display === 'none') {
+          if (this.config.debug) {
+            console.log(`${debugPrefix} REJECT - Element has display:none: <${element.tagName.toLowerCase()}>`);
+          }
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        // Skip if visibility is hidden
+        if (style.visibility === 'hidden') {
+          if (this.config.debug) {
+            console.log(`${debugPrefix} REJECT - Element has visibility:hidden: <${element.tagName.toLowerCase()}>`);
+          }
+          return NodeFilter.FILTER_REJECT;
+        }
+      }
+
+      // Skip element nodes themselves but continue traversing their children
+      // We don't need to collect element nodes, only text nodes
+      return NodeFilter.FILTER_SKIP;
+    }
+
+    // Handle text nodes
     // Skip if already scanned
     if (this.scannedNodes.has(node)) {
       if (this.config.debug) {
@@ -100,7 +248,7 @@ export class DOMScanner {
       return NodeFilter.FILTER_REJECT;
     }
 
-    // Check if parent matches exclude selectors
+    // Check if parent exists
     const parent = node.parentElement;
     if (!parent) {
       if (this.config.debug) {
@@ -109,36 +257,9 @@ export class DOMScanner {
       return NodeFilter.FILTER_REJECT;
     }
 
-    // Parse exclude selectors and check
-    if (this.config.excludeSelectors) {
-      try {
-        if (parent.matches(this.config.excludeSelectors)) {
-          if (this.config.debug) {
-            console.log(`${debugPrefix} REJECT - Parent matches excludeSelectors`);
-          }
-          return NodeFilter.FILTER_REJECT;
-        }
-        // Also check if any ancestor matches
-        if (parent.closest(this.config.excludeSelectors)) {
-          if (this.config.debug) {
-            console.log(`${debugPrefix} REJECT - Ancestor matches excludeSelectors`);
-          }
-          return NodeFilter.FILTER_REJECT;
-        }
-      } catch (e) {
-        if (this.config.debug) {
-          console.warn('VerseTagger: Invalid excludeSelectors', e);
-        }
-      }
-    }
-
-    // Skip if already inside a verse reference element
-    if (parent.closest(`.${this.config.referenceClass}`)) {
-      if (this.config.debug) {
-        console.log(`${debugPrefix} REJECT - Inside existing verse reference`);
-      }
-      return NodeFilter.FILTER_REJECT;
-    }
+    // At this point, we know the parent is not excluded (because excluded elements
+    // would have returned FILTER_SKIP above, preventing us from reaching their text nodes)
+    // So we don't need to check parent.matches() or parent.closest() here
 
     if (this.config.debug) {
       console.log(`${debugPrefix} ACCEPT`);
