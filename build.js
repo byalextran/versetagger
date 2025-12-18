@@ -54,9 +54,12 @@ async function build() {
       ...commonOptions,
       outfile: 'dist/versetagger.js',
       format: 'iife',
-      globalName: 'VerseTagger',
+      globalName: 'VersetaggerModule',
       footer: {
         js: `
+// Extract the VerseTagger class and make it globally available
+var VerseTagger = VersetaggerModule.VerseTagger || VersetaggerModule.default || VersetaggerModule;
+
 // UMD-style export for compatibility
 if (typeof module !== "undefined" && module.exports) {
   module.exports = VerseTagger;
@@ -103,9 +106,12 @@ if (isWatch) {
     ...commonOptions,
     outfile: 'dist/versetagger.js',
     format: 'iife',
-    globalName: 'VerseTagger',
+    globalName: 'VersetaggerModule',
     footer: {
       js: `
+// Extract the VerseTagger class and make it globally available
+var VerseTagger = VersetaggerModule.VerseTagger || VersetaggerModule.default || VersetaggerModule;
+
 // UMD-style export for compatibility
 if (typeof module !== "undefined" && module.exports) {
   module.exports = VerseTagger;
