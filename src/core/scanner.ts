@@ -5,6 +5,7 @@
 
 import type { VersetaggerConfig } from './config';
 import { parseReferences, type ScriptureReference } from '../parser/reference-parser';
+import { findVersion } from '../parser/bible-versions';
 
 export interface ScannedReference extends ScriptureReference {
   /** The DOM element wrapping the reference */
@@ -317,16 +318,20 @@ export class DOMScanner {
    * Build a URL for a scripture reference
    */
   private buildReferenceUrl(ref: ScriptureReference): string {
-    const version = ref.version || this.config.defaultVersion;
+    const versionAbbr = ref.version || this.config.defaultVersion;
     const versesStr = ref.verses.length > 0
       ? ref.verses.join(',')
       : '';
+
+    // Look up the Bible ID from the version abbreviation
+    const bibleVersion = findVersion(versionAbbr);
+    const bibleId = bibleVersion ? bibleVersion.id.toString() : '111'; // Default to NIV (111) if not found
 
     return this.config.linkFormat
       .replace('{book}', ref.book)
       .replace('{chapter}', ref.chapter.toString())
       .replace('{verses}', versesStr)
-      .replace('{version}', version);
+      .replace('{version}', bibleId);
   }
 
   /**
