@@ -22,6 +22,7 @@ export class ModalManager {
   private config: Required<VersetaggerConfig>;
   private modalElement: HTMLElement | null = null;
   private containerElement: HTMLElement | null = null;
+  private bridgeElement: HTMLElement | null = null;
   private currentTarget: HTMLElement | null = null;
   private currentState: ModalState = 'hidden';
   private renderCallback: ((container: HTMLElement, content: VerseContent) => void) | null = null;
@@ -74,8 +75,14 @@ export class ModalManager {
     closeButton.addEventListener('click', () => this.hide());
     this.modalElement.appendChild(closeButton);
 
-    // Append to body
+    // Append modal to body
     document.body.appendChild(this.modalElement);
+
+    // Create invisible bridge element as a sibling (separate element)
+    this.bridgeElement = document.createElement('div');
+    this.bridgeElement.className = 'versetagger-modal-bridge';
+    this.bridgeElement.style.display = 'none';
+    document.body.appendChild(this.bridgeElement);
 
     // Attach global listeners (only once)
     this.attachGlobalListeners();
@@ -107,19 +114,51 @@ export class ModalManager {
       }
     });
 
-    // Keep modal open when hovering over it
+    // Handle hover on modal to prevent premature closing
+    // This works with EventHandler's mouseLeaveTimeout
     if (this.modalElement) {
       this.modalElement.addEventListener('mouseenter', () => {
-        // Modal is being hovered, don't close
-        this.modalElement?.setAttribute('data-hover', 'true');
+        // Modal is being hovered - signal we're in the modal region
+        this.modalElement?.setAttribute('data-modal-hovered', 'true');
       });
 
       this.modalElement.addEventListener('mouseleave', () => {
-        this.modalElement?.removeAttribute('data-hover');
-        // Close after a small delay if trigger is also not hovered
+        // Left the modal
+        this.modalElement?.removeAttribute('data-modal-hovered');
+
+        // Close after small delay if trigger and bridge are also not hovered
         setTimeout(() => {
           if (
-            this.modalElement?.getAttribute('data-hover') !== 'true' &&
+            this.modalElement?.getAttribute('data-modal-hovered') !== 'true' &&
+            this.bridgeElement?.getAttribute('data-bridge-hovered') !== 'true' &&
+            this.currentTarget &&
+            !this.currentTarget.matches(':hover')
+          ) {
+            this.hide();
+          }
+        }, 100);
+      });
+    }
+
+    // Handle hover on bridge to prevent premature closing
+    if (this.bridgeElement) {
+      this.bridgeElement.addEventListener('mouseenter', () => {
+        // Bridge is being hovered - signal we're in the bridge region
+        this.bridgeElement?.setAttribute('data-bridge-hovered', 'true');
+        // Also set modal hovered so EventHandler doesn't close
+        this.modalElement?.setAttribute('data-modal-hovered', 'true');
+      });
+
+      this.bridgeElement.addEventListener('mouseleave', () => {
+        // Left the bridge
+        this.bridgeElement?.removeAttribute('data-bridge-hovered');
+        this.modalElement?.removeAttribute('data-modal-hovered');
+
+        // Close after small delay if modal and trigger are also not hovered
+        setTimeout(() => {
+          if (
+            this.modalElement?.getAttribute('data-modal-hovered') !== 'true' &&
+            this.bridgeElement?.getAttribute('data-bridge-hovered') !== 'true' &&
             this.currentTarget &&
             !this.currentTarget.matches(':hover')
           ) {
@@ -182,6 +221,12 @@ export class ModalManager {
     this.position(targetElement);
     this.modalElement.style.display = 'block';
     this.modalElement.classList.add('versetagger-modal-visible');
+
+    // Show and position bridge
+    if (this.bridgeElement) {
+      this.bridgeElement.style.display = 'block';
+      this.positionBridge(targetElement);
+    }
 
     // Announce to screen readers
     if (this.config.accessibility.announceToScreenReaders) {
@@ -250,6 +295,11 @@ export class ModalManager {
 
     this.currentState = 'hidden';
     this.modalElement.classList.remove('versetagger-modal-visible');
+
+    // Hide bridge
+    if (this.bridgeElement) {
+      this.bridgeElement.style.display = 'none';
+    }
 
     // Re-enable body scroll
     document.body.classList.remove('versetagger-modal-open');
@@ -326,6 +376,48 @@ export class ModalManager {
     this.modalElement.style.top = `${top}px`;
     this.modalElement.style.left = `${left + window.scrollX}px`;
     this.modalElement.setAttribute('data-placement', placement);
+
+    // Update bridge position if visible
+    if (this.bridgeElement && this.bridgeElement.style.display === 'block' && this.currentTarget) {
+      this.positionBridge(this.currentTarget);
+    }
+  }
+
+  /**
+   * Position the invisible bridge between trigger and modal
+   */
+  private positionBridge(targetElement: HTMLElement): void {
+    if (!this.bridgeElement || !this.modalElement) {
+      return;
+    }
+
+    const targetRect = targetElement.getBoundingClientRect();
+    const modalRect = this.modalElement.getBoundingClientRect();
+    const placement = this.modalElement.getAttribute('data-placement');
+
+    if (placement === 'below') {
+      // Modal is below trigger - bridge covers trigger height + gap to modal
+      const bridgeTop = targetRect.top + window.scrollY;
+      const bridgeHeight = (modalRect.top + window.scrollY) - bridgeTop;
+      const bridgeLeft = Math.min(targetRect.left, modalRect.left);
+      const bridgeWidth = Math.max(targetRect.right, modalRect.right) - bridgeLeft;
+
+      this.bridgeElement.style.top = `${bridgeTop}px`;
+      this.bridgeElement.style.left = `${bridgeLeft + window.scrollX}px`;
+      this.bridgeElement.style.width = `${bridgeWidth}px`;
+      this.bridgeElement.style.height = `${bridgeHeight}px`;
+    } else {
+      // Modal is above trigger - bridge covers trigger height + gap to modal
+      const bridgeTop = modalRect.bottom + window.scrollY;
+      const bridgeHeight = (targetRect.bottom + window.scrollY) - bridgeTop;
+      const bridgeLeft = Math.min(targetRect.left, modalRect.left);
+      const bridgeWidth = Math.max(targetRect.right, modalRect.right) - bridgeLeft;
+
+      this.bridgeElement.style.top = `${bridgeTop}px`;
+      this.bridgeElement.style.left = `${bridgeLeft + window.scrollX}px`;
+      this.bridgeElement.style.width = `${bridgeWidth}px`;
+      this.bridgeElement.style.height = `${bridgeHeight}px`;
+    }
   }
 
   /**
@@ -391,6 +483,7 @@ export class ModalManager {
       this.modalElement.remove();
       this.modalElement = null;
       this.containerElement = null;
+      this.bridgeElement = null;
     }
     // Re-enable body scroll
     document.body.classList.remove('versetagger-modal-open');

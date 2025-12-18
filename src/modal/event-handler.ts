@@ -127,13 +127,14 @@ export class EventHandler {
 
     // Only close if this is the active element
     if (this.activeElement === element) {
-      // Add small delay before closing to allow moving to modal
+      // Add delay before closing to allow moving to modal
+      // 200ms provides smooth experience with the invisible bridge
       this.mouseLeaveTimeout = setTimeout(() => {
         if (this.activeElement === element) {
           this.onClose(element, event);
           this.activeElement = null;
         }
-      }, 100);
+      }, 200);
     }
   }
 
@@ -163,7 +164,7 @@ export class EventHandler {
             this.onClose(element, event);
             this.activeElement = null;
           }
-        }, 100);
+        }, 200);
       }
     }
   }

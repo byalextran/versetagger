@@ -333,6 +333,12 @@ export class VerseTagger {
    * @private
    */
   private handleReferenceClose(element: HTMLElement, event: Event): void {
+    // Check if modal (or bridge) is being hovered before closing
+    const modalElement = document.getElementById('versetagger-modal');
+    if (modalElement?.getAttribute('data-modal-hovered') === 'true') {
+      // Don't close - user is hovering over modal or bridge
+      return;
+    }
     this.modalManager.hide();
   }
 

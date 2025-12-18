@@ -18,6 +18,7 @@ export const MODAL_BASE_STYLES = `
   width: 90vw;
   max-height: 80vh;
   overflow-y: auto;
+  overflow-x: visible; /* Allow bridge to extend outside */
   opacity: 0;
   transform: translateY(-8px);
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -41,6 +42,14 @@ export const MODAL_BASE_STYLES = `
 
 .versetagger-modal[data-placement="above"] {
   transform-origin: bottom center;
+}
+
+/* Invisible bridge that connects trigger to modal */
+.versetagger-modal-bridge {
+  position: absolute;
+  pointer-events: auto;
+  z-index: 999998; /* Just below modal (999999) but above page content */
+  /* Dimensions set via JS based on modal position */
 }
 
 /* Modal Content Container */
