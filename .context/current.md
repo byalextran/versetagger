@@ -64,70 +64,6 @@ versetagger/
 
 ## Implementation Phases
 
-### Phase 7: Security & Performance ✅
-**Goal**: Harden security, optimize performance
-
-**Completed Tasks**:
-1. ✅ Security hardening (`src/utils/sanitizer.ts`)
-   - Enhanced HTML sanitizer with whitelist-based filtering
-   - Only allow safe formatting tags (p, br, span, div, strong, em, b, i, sup, sub)
-   - Only allow safe attributes (class, id, title, lang, dir)
-   - Strip all event handlers and dangerous attributes
-   - Remove disallowed tags by replacing with text content
-   - Full CSP compatibility (no eval, no inline scripts, no dangerous protocols)
-   - DOMParser-based sanitization (no code execution)
-   - URL validation for http/https only
-
-2. ✅ Performance optimization
-   - Implemented lazy loading of modal UI (modal created only on first use)
-   - Defer style injection until modal is needed
-   - Verified debounce is properly applied to hover events (500ms default)
-   - Added comprehensive bundle size analysis to build script
-   - Current bundle sizes: UMD 12.63 KB gzipped, ESM 12.38 KB gzipped
-   - Well under 30KB gzipped target
-
-3. Browser compatibility (verified through build target)
-   - Build target: ES2017+
-   - Compatible with modern browsers (Chrome, Firefox, Safari, Edge - last 2 versions)
-   - Mobile Safari and Chrome Android supported
-   - No compatibility issues with current implementation
-
-**Files Modified**:
-- `src/utils/sanitizer.ts` - Enhanced security
-- `src/modal/modal-manager.ts` - Lazy loading
-- `build.js` - Bundle size analysis
-
-### Phase 8: Documentation & Examples ✅
-**Goal**: Comprehensive docs for library users
-
-**Completed Tasks**:
-1. ✅ Write documentation
-   - README.md: Quick start, features, installation
-   - docs/getting-started.md: Detailed setup guide
-   - docs/configuration.md: All config options
-   - docs/theming.md: Theme creation guide
-   - docs/api-reference.md: Public API
-   - docs/cloudflare-proxy.md: Proxy setup guide
-
-2. ✅ Create usage examples
-   - examples/basic.html: Basic usage with multiple scripture references
-   - examples/custom-theme.html: Interactive theme switcher with 7 themes
-   - Multiple configuration examples throughout
-
-3. ✅ Proxy server examples
-   - Cloudflare Workers (primary) - already existed from Phase 2
-   - Comprehensive deployment guide in docs/cloudflare-proxy.md
-
-**Files Created**:
-- `README.md` - Comprehensive project README with quick start
-- `docs/getting-started.md` - Detailed setup guide with troubleshooting
-- `docs/configuration.md` - All configuration options with examples
-- `docs/theming.md` - Complete theming guide with examples
-- `docs/api-reference.md` - Full API reference with TypeScript types
-- `docs/cloudflare-proxy.md` - Proxy setup, caching, security, troubleshooting
-- `examples/basic.html` - Basic integration example
-- `examples/custom-theme.html` - Custom theme demonstration
-
 ### Phase 9: Testing & CI
 **Goal**: Comprehensive test coverage, automated testing
 
@@ -423,3 +359,67 @@ versetagger/
 **Critical Files**:
 - `src/theming/theme-manager.ts`
 - `src/theming/preset-themes.ts`
+
+### Phase 7: Security & Performance ✅
+**Goal**: Harden security, optimize performance
+
+**Completed Tasks**:
+1. ✅ Security hardening (`src/utils/sanitizer.ts`)
+   - Enhanced HTML sanitizer with whitelist-based filtering
+   - Only allow safe formatting tags (p, br, span, div, strong, em, b, i, sup, sub)
+   - Only allow safe attributes (class, id, title, lang, dir)
+   - Strip all event handlers and dangerous attributes
+   - Remove disallowed tags by replacing with text content
+   - Full CSP compatibility (no eval, no inline scripts, no dangerous protocols)
+   - DOMParser-based sanitization (no code execution)
+   - URL validation for http/https only
+
+2. ✅ Performance optimization
+   - Implemented lazy loading of modal UI (modal created only on first use)
+   - Defer style injection until modal is needed
+   - Verified debounce is properly applied to hover events (500ms default)
+   - Added comprehensive bundle size analysis to build script
+   - Current bundle sizes: UMD 12.63 KB gzipped, ESM 12.38 KB gzipped
+   - Well under 30KB gzipped target
+
+3. Browser compatibility (verified through build target)
+   - Build target: ES2017+
+   - Compatible with modern browsers (Chrome, Firefox, Safari, Edge - last 2 versions)
+   - Mobile Safari and Chrome Android supported
+   - No compatibility issues with current implementation
+
+**Files Modified**:
+- `src/utils/sanitizer.ts` - Enhanced security
+- `src/modal/modal-manager.ts` - Lazy loading
+- `build.js` - Bundle size analysis
+
+### Phase 8: Documentation & Examples ✅
+**Goal**: Comprehensive docs for library users
+
+**Completed Tasks**:
+1. ✅ Write documentation
+   - README.md: Quick start, features, installation
+   - docs/getting-started.md: Detailed setup guide
+   - docs/configuration.md: All config options
+   - docs/theming.md: Theme creation guide
+   - docs/api-reference.md: Public API
+   - docs/cloudflare-proxy.md: Proxy setup guide
+
+2. ✅ Create usage examples
+   - examples/basic.html: Basic usage with multiple scripture references
+   - examples/custom-theme.html: Interactive theme switcher with 7 themes
+   - Multiple configuration examples throughout
+
+3. ✅ Proxy server examples
+   - Cloudflare Workers (primary) - already existed from Phase 2
+   - Comprehensive deployment guide in docs/cloudflare-proxy.md
+
+**Files Created**:
+- `README.md` - Comprehensive project README with quick start
+- `docs/getting-started.md` - Detailed setup guide with troubleshooting
+- `docs/configuration.md` - All configuration options with examples
+- `docs/theming.md` - Complete theming guide with examples
+- `docs/api-reference.md` - Full API reference with TypeScript types
+- `docs/cloudflare-proxy.md` - Proxy setup, caching, security, troubleshooting
+- `examples/basic.html` - Basic integration example
+- `examples/custom-theme.html` - Custom theme demonstration
