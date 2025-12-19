@@ -259,10 +259,7 @@ export const MODAL_BASE_STYLES = `
     width: calc(100vw - 32px);
     max-height: 85vh;
     font-size: 15px;
-  }
-
-  .versetagger-modal-content {
-    padding: 16px;
+    padding: 16px 20px 12px 20px;
   }
 
   .versetagger-modal-close {
@@ -275,7 +272,7 @@ export const MODAL_BASE_STYLES = `
 
   .versetagger-modal-header {
     padding-right: 28px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
 
   .versetagger-modal-reference {
@@ -294,6 +291,18 @@ export const MODAL_BASE_STYLES = `
 
   .versetagger-modal-verse {
     gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .versetagger-modal-verses {
+    margin-bottom: 10px;
+  }
+
+  .versetagger-modal-footer {
+    padding-top: 8px;
+  }
+
+  .versetagger-content-text {
     margin-bottom: 10px;
   }
 }

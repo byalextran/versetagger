@@ -34,10 +34,6 @@ export function renderVerseContent(
 
   container.appendChild(header);
 
-  // Create content container
-  const contentContainer = document.createElement('div');
-  contentContainer.className = 'versetagger-modal-content';
-
   // Render verse content
   const contentText = document.createElement('p');
   contentText.className = 'versetagger-content-text';
@@ -50,8 +46,7 @@ export function renderVerseContent(
   // Set plain text content directly (API returns plain text, not HTML)
   contentText.textContent = content.content;
 
-  contentContainer.appendChild(contentText);
-  container.appendChild(contentContainer);
+  container.appendChild(contentText);
 
   // Create footer with link to YouVersion
   const footer = document.createElement('div');
