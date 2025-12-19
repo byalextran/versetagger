@@ -2,7 +2,7 @@
 
 VerseTagger is a TypeScript library that detects scripture references on a webpage and turns them into interactive links. No need to manually link them yourself. 
 
-[View Demo](./demo.html)
+[View Demo](https://byalextran.github.io/versetagger/demo.html)
 
 ## Features
 
@@ -20,7 +20,7 @@ VerseTagger is a TypeScript library that detects scripture references on a webpa
 Add this right before the `</body>` tag of any page you want VerseTagger to process. 
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/versetagger@latest/dist/versetagger.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/byalextran/versetagger@main/dist/versetagger.js"></script>
 <script>
   // use default options
   const versetagger = new VerseTagger({});
