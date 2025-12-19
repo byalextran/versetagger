@@ -1,20 +1,18 @@
 {
   "name": "versetagger",
   "version": "0.1.0",
-  "description": "Pure TypeScript library that scans webpages for scripture references and displays verse content in elegant, customizable modals",
+  "description": "VerseTagger is a TypeScript library that automatically detects scripture references on a webpage and provides interactive bible.com previews via hover modals.",
   "main": "dist/versetagger.js",
   "module": "dist/versetagger.esm.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "themes"
+    "dist"
   ],
   "scripts": {
     "build": "node build.js",
     "dev": "node build.js --dev",
     "watch": "node build.js --watch",
     "type-check": "tsc --noEmit",
-    "update-translations": "tsx update-translations.ts",
     "worker:dev": "wrangler dev",
     "worker:deploy": "wrangler deploy",
     "worker:tail": "wrangler tail"
@@ -24,11 +22,10 @@
     "scripture",
     "verse",
     "youversion",
-    "reference",
-    "tooltip",
-    "modal"
+    "modal",
+    "bible.com"
   ],
-  "author": "",
+  "author": "Alex Tran",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^25.0.3",
