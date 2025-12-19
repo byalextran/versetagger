@@ -20,7 +20,6 @@ Creates a new VerseTagger instance and initializes the library.
 ```javascript
 const versetagger = new VerseTagger({
   proxyUrl: 'https://my-proxy.workers.dev',
-  trigger: 'hover',
   colorScheme: 'auto'
 });
 ```
@@ -109,14 +108,15 @@ Updates configuration dynamically without re-initializing.
 **Example:**
 
 ```javascript
-// Change trigger mode
+// Update configuration
 versetagger.updateConfig({
-  trigger: 'click'
+  hoverDelay: 300,
+  defaultVersion: 'ESV'
 });
 
 // Update multiple options
 versetagger.updateConfig({
-  trigger: 'both',
+  colorScheme: 'dark',
   hoverDelay: 300,
   defaultVersion: 'ESV'
 });
@@ -206,8 +206,8 @@ Returns the current configuration.
 ```javascript
 const config = versetagger.getConfig();
 console.log('Proxy URL:', config.proxyUrl);
-console.log('Trigger mode:', config.trigger);
 console.log('Default version:', config.defaultVersion);
+console.log('Hover delay:', config.hoverDelay);
 ```
 
 **Note:** Returns a copy of the config, so modifying it won't affect VerseTagger. Use `updateConfig()` to change settings.
@@ -325,8 +325,6 @@ Main configuration interface. See [Configuration Guide](./configuration.md) for 
 ```typescript
 interface VersetaggerConfig {
   proxyUrl: string;
-  behavior?: 'link-only' | 'modal-only' | 'both';
-  trigger?: 'hover' | 'click' | 'both';
   hoverDelay?: number;
   autoScan?: boolean;
   excludeSelectors?: string;
@@ -339,7 +337,6 @@ interface VersetaggerConfig {
   };
   referenceClass?: string;
   openLinksInNewTab?: boolean;
-  linkFormat?: string;
   debug?: boolean;
 }
 ```

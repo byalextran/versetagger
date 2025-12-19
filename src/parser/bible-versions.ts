@@ -301,7 +301,7 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
   },
   {
     id: 100,
-    abbreviation: 'NASB1995',
+    abbreviation: 'NASB',
     title: 'New American Standard Bible - NASB 1995',
     licensed: true
   },

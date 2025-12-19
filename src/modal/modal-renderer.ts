@@ -70,18 +70,11 @@ function createYouVersionLink(
   content: VerseContent,
   config: Required<VersetaggerConfig>
 ): HTMLAnchorElement {
-  // Build URL using link format from config
-  let url = config.linkFormat;
-
   // Get version ID for YouVersion URL
   const versionId = getVersionId(content.version);
 
-  // Replace placeholders
-  url = url
-    .replace('{version}', versionId)
-    .replace('{book}', content.book)
-    .replace('{chapter}', content.chapter.toString())
-    .replace('{verses}', content.verses);
+  // Build URL with hardcoded format
+  const url = `https://www.bible.com/bible/${versionId}/${content.book}.${content.chapter}.${content.verses}`;
 
   // Create safe link
   const link = createSafeLink(

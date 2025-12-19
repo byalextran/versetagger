@@ -3,8 +3,6 @@
  * Type-safe configuration with validation and defaults
  */
 
-export type BehaviorMode = 'link-only' | 'modal-only' | 'both';
-export type TriggerMode = 'hover' | 'click' | 'both';
 export type ColorScheme = 'light' | 'dark' | 'auto';
 
 export interface VersetaggerConfig {
@@ -13,24 +11,6 @@ export interface VersetaggerConfig {
    * Example: "https://your-worker.workers.dev/api/verses"
    */
   proxyUrl: string;
-
-  /**
-   * Behavior mode for scripture references
-   * - 'link-only': Only convert to clickable links (no modal)
-   * - 'modal-only': Show modals but don't make links
-   * - 'both': Convert to links AND show modals
-   * @default 'both'
-   */
-  behavior?: BehaviorMode;
-
-  /**
-   * How to trigger the modal display
-   * - 'hover': Show on mouse hover
-   * - 'click': Show on click
-   * - 'both': Show on hover or click
-   * @default 'hover'
-   */
-  trigger?: TriggerMode;
 
   /**
    * Delay in milliseconds before showing modal on hover
@@ -101,13 +81,6 @@ export interface VersetaggerConfig {
   openLinksInNewTab?: boolean;
 
   /**
-   * Custom link format for YouVersion
-   * Use {book}, {chapter}, {verses}, {version} as placeholders
-   * @default 'https://www.bible.com/bible/{version}/{book}.{chapter}.{verses}'
-   */
-  linkFormat?: string;
-
-  /**
    * Enable debug logging
    * @default false
    */
@@ -119,8 +92,6 @@ export interface VersetaggerConfig {
  */
 export const DEFAULT_CONFIG: Required<VersetaggerConfig> = {
   proxyUrl: '', // Required, no default
-  behavior: 'both',
-  trigger: 'hover',
   hoverDelay: 500,
   autoScan: true,
   excludeSelectors: 'code, pre, script, style, head, meta, title, link, noscript, svg, canvas, iframe, video, select, option, button, a, .no-verse-tagging',
@@ -133,7 +104,6 @@ export const DEFAULT_CONFIG: Required<VersetaggerConfig> = {
   },
   referenceClass: 'verse-reference',
   openLinksInNewTab: true,
-  linkFormat: 'https://www.bible.com/bible/{version}/{book}.{chapter}.{verses}',
   debug: false
 };
 
@@ -169,20 +139,6 @@ export function validateConfig(config: VersetaggerConfig): void {
     new URL(config.proxyUrl);
   } catch {
     throw new Error(`VerseTagger: Invalid proxyUrl "${config.proxyUrl}". Must be a valid URL.`);
-  }
-
-  // Validate behavior mode
-  if (config.behavior && !['link-only', 'modal-only', 'both'].includes(config.behavior)) {
-    throw new Error(
-      `VerseTagger: Invalid behavior "${config.behavior}". Must be "link-only", "modal-only", or "both".`
-    );
-  }
-
-  // Validate trigger mode
-  if (config.trigger && !['hover', 'click', 'both'].includes(config.trigger)) {
-    throw new Error(
-      `VerseTagger: Invalid trigger "${config.trigger}". Must be "hover", "click", or "both".`
-    );
   }
 
   // Validate color scheme

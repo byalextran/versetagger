@@ -402,12 +402,8 @@ export class DOMScanner {
    * Create a wrapper element for a scripture reference
    */
   private createReferenceElement(ref: ScriptureReference): HTMLElement {
-    const behavior = this.config.behavior;
-    const shouldBeLink = behavior === 'link-only' || behavior === 'both';
-    const shouldShowModal = behavior === 'modal-only' || behavior === 'both';
-
-    // Create element (link or span based on behavior)
-    const element = document.createElement(shouldBeLink ? 'a' : 'span') as HTMLElement;
+    // Always create links with modal support
+    const element = document.createElement('a') as HTMLAnchorElement;
 
     // Set the text content
     element.textContent = ref.text;
@@ -423,30 +419,24 @@ export class DOMScanner {
       element.dataset.version = ref.version;
     }
 
-    // If it's a link, set href
-    if (shouldBeLink && element instanceof HTMLAnchorElement) {
-      element.href = this.buildReferenceUrl(ref);
-      if (this.config.openLinksInNewTab) {
-        element.target = '_blank';
-        element.rel = 'noopener noreferrer';
-      }
+    // Set href for link
+    element.href = this.buildReferenceUrl(ref);
+    if (this.config.openLinksInNewTab) {
+      element.target = '_blank';
+      element.rel = 'noopener noreferrer';
     }
 
     // Add ARIA attributes for accessibility
-    if (shouldShowModal) {
-      element.setAttribute('role', 'button');
-      element.setAttribute('tabindex', '0');
-      element.setAttribute('aria-label', `Show verse: ${ref.text}`);
+    element.setAttribute('role', 'button');
+    element.setAttribute('tabindex', '0');
+    element.setAttribute('aria-label', `Show verse: ${ref.text}`);
 
-      if (this.config.accessibility.keyboardNav) {
-        element.setAttribute('aria-haspopup', 'dialog');
-      }
+    if (this.config.accessibility.keyboardNav) {
+      element.setAttribute('aria-haspopup', 'dialog');
     }
 
     // Add data attribute to indicate modal support
-    if (shouldShowModal) {
-      element.dataset.hasModal = 'true';
-    }
+    element.dataset.hasModal = 'true';
 
     return element;
   }
@@ -462,11 +452,7 @@ export class DOMScanner {
     const bibleVersion = findVersion(versionAbbr);
     const bibleId = bibleVersion ? bibleVersion.id.toString() : '111'; // Default to NIV (111) if not found
 
-    return this.config.linkFormat
-      .replace('{book}', ref.book)
-      .replace('{chapter}', ref.chapter.toString())
-      .replace('{verses}', versesStr)
-      .replace('{version}', bibleId);
+    return `https://www.bible.com/bible/${bibleId}/${ref.book}.${ref.chapter}.${versesStr}`;
   }
 
   /**

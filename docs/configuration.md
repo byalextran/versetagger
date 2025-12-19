@@ -30,62 +30,6 @@ See [Cloudflare Proxy Setup](./cloudflare-proxy.md) for details on setting up a 
 
 ## Behavior Options
 
-### `behavior`
-
-**Type:** `'link-only' | 'modal-only' | 'both'`
-**Default:** `'both'`
-
-Controls how scripture references are enhanced:
-
-- `'link-only'`: Convert references to clickable links (opens YouVersion in new tab)
-- `'modal-only'`: Show modals but don't create links
-- `'both'`: Create links AND show modals
-
-```javascript
-// Just create links, no modals
-{
-  behavior: 'link-only'
-}
-
-// Show modals but no links
-{
-  behavior: 'modal-only'
-}
-
-// Both links and modals (default)
-{
-  behavior: 'both'
-}
-```
-
-### `trigger`
-
-**Type:** `'hover' | 'click' | 'both'`
-**Default:** `'hover'`
-
-How to trigger the modal display:
-
-- `'hover'`: Show modal on mouse hover
-- `'click'`: Show modal on click
-- `'both'`: Show on hover or click
-
-```javascript
-// Hover to show modal
-{
-  trigger: 'hover'
-}
-
-// Click to show modal
-{
-  trigger: 'click'
-}
-
-// Hover or click
-{
-  trigger: 'both'
-}
-```
-
 ### `hoverDelay`
 
 **Type:** `number` (milliseconds)
@@ -152,23 +96,6 @@ Default Bible version to use when not specified in the reference.
 ```
 
 Common versions: `NIV`, `ESV`, `KJV`, `NKJV`, `NLT`, `MSG`, `NASB`, `CSB`
-
-### `linkFormat`
-
-**Type:** `string`
-**Default:** `'https://www.bible.com/bible/{version}/{book}.{chapter}.{verses}'`
-
-Custom URL format for Bible links. Use placeholders:
-- `{book}` - Book code
-- `{chapter}` - Chapter number
-- `{verses}` - Verse numbers
-- `{version}` - Bible version
-
-```javascript
-{
-  linkFormat: 'https://www.biblegateway.com/passage/?search={book}+{chapter}:{verses}&version={version}'
-}
-```
 
 ### `openLinksInNewTab`
 
@@ -318,15 +245,12 @@ const versetagger = new VerseTagger({
   proxyUrl: 'https://my-proxy.workers.dev',
 
   // Behavior
-  behavior: 'both',
-  trigger: 'hover',
   hoverDelay: 500,
   autoScan: true,
   excludeSelectors: 'code, pre, .no-verses',
 
   // Bible settings
   defaultVersion: 'NIV',
-  linkFormat: 'https://www.bible.com/bible/{version}/{book}.{chapter}.{verses}',
   openLinksInNewTab: true,
 
   // Appearance
@@ -354,25 +278,6 @@ Here are some common configuration presets for different use cases:
 ```javascript
 const versetagger = new VerseTagger({
   proxyUrl: 'https://my-proxy.workers.dev'
-});
-```
-
-### Click-Only Modals
-
-```javascript
-const versetagger = new VerseTagger({
-  proxyUrl: 'https://my-proxy.workers.dev',
-  trigger: 'click',
-  hoverDelay: 0
-});
-```
-
-### Links Only (No Modals)
-
-```javascript
-const versetagger = new VerseTagger({
-  proxyUrl: 'https://my-proxy.workers.dev',
-  behavior: 'link-only'
 });
 ```
 
@@ -436,14 +341,13 @@ You can update configuration after initialization:
 ```javascript
 // Initial setup
 const versetagger = new VerseTagger({
-  proxyUrl: 'https://my-proxy.workers.dev',
-  trigger: 'hover'
+  proxyUrl: 'https://my-proxy.workers.dev'
 });
 
 // Update later
 versetagger.updateConfig({
-  trigger: 'click',
-  colorScheme: 'dark'
+  colorScheme: 'dark',
+  hoverDelay: 300
 });
 ```
 
@@ -475,11 +379,11 @@ try {
 try {
   const versetagger = new VerseTagger({
     proxyUrl: 'https://my-proxy.workers.dev',
-    behavior: 'invalid'
+    colorScheme: 'invalid'
   });
 } catch (error) {
   console.error(error.message);
-  // "VerseTagger: Invalid behavior..."
+  // "VerseTagger: Invalid colorScheme..."
 }
 ```
 
@@ -492,8 +396,7 @@ import VerseTagger, { type VersetaggerConfig } from 'versetagger';
 
 const config: VersetaggerConfig = {
   proxyUrl: 'https://my-proxy.workers.dev',
-  trigger: 'hover',  // Autocomplete and type checking!
-  colorScheme: 'auto'
+  colorScheme: 'auto'  // Autocomplete and type checking!
 };
 
 const versetagger = new VerseTagger(config);

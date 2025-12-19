@@ -44,20 +44,11 @@ export class EventHandler {
       return; // No modal to show
     }
 
-    const trigger = this.config.trigger;
-
-    // Attach hover events
-    if (trigger === 'hover' || trigger === 'both') {
-      element.addEventListener('mouseenter', this.handleMouseEnter.bind(this));
-      element.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
-      element.addEventListener('focus', this.handleFocus.bind(this));
-      element.addEventListener('blur', this.handleBlur.bind(this));
-    }
-
-    // Attach click events
-    if (trigger === 'click' || trigger === 'both') {
-      element.addEventListener('click', this.handleClick.bind(this));
-    }
+    // Attach hover events (always use hover mode)
+    element.addEventListener('mouseenter', this.handleMouseEnter.bind(this));
+    element.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+    element.addEventListener('focus', this.handleFocus.bind(this));
+    element.addEventListener('blur', this.handleBlur.bind(this));
 
     // Attach keyboard events for accessibility
     if (this.config.accessibility.keyboardNav) {
@@ -74,18 +65,11 @@ export class EventHandler {
       return;
     }
 
-    const trigger = this.config.trigger;
-
-    if (trigger === 'hover' || trigger === 'both') {
-      element.removeEventListener('mouseenter', this.handleMouseEnter.bind(this));
-      element.removeEventListener('mouseleave', this.handleMouseLeave.bind(this));
-      element.removeEventListener('focus', this.handleFocus.bind(this));
-      element.removeEventListener('blur', this.handleBlur.bind(this));
-    }
-
-    if (trigger === 'click' || trigger === 'both') {
-      element.removeEventListener('click', this.handleClick.bind(this));
-    }
+    // Remove hover events
+    element.removeEventListener('mouseenter', this.handleMouseEnter.bind(this));
+    element.removeEventListener('mouseleave', this.handleMouseLeave.bind(this));
+    element.removeEventListener('focus', this.handleFocus.bind(this));
+    element.removeEventListener('blur', this.handleBlur.bind(this));
 
     if (this.config.accessibility.keyboardNav) {
       element.removeEventListener('keydown', this.handleKeyDown.bind(this));
@@ -142,60 +126,24 @@ export class EventHandler {
    * Handle focus event (for keyboard navigation)
    */
   private handleFocus(event: Event): void {
-    const trigger = this.config.trigger;
-    if (trigger === 'hover' || trigger === 'both') {
-      const element = event.currentTarget as HTMLElement;
-      this.activeElement = element;
-      this.onOpen(element, event);
-    }
+    const element = event.currentTarget as HTMLElement;
+    this.activeElement = element;
+    this.onOpen(element, event);
   }
 
   /**
    * Handle blur event
    */
   private handleBlur(event: Event): void {
-    const trigger = this.config.trigger;
-    if (trigger === 'hover' || trigger === 'both') {
-      const element = event.currentTarget as HTMLElement;
-      if (this.activeElement === element) {
-        // Small delay to allow focus to move to modal
-        setTimeout(() => {
-          if (this.activeElement === element) {
-            this.onClose(element, event);
-            this.activeElement = null;
-          }
-        }, 200);
-      }
-    }
-  }
-
-  /**
-   * Handle click event
-   */
-  private handleClick(event: Event): void {
     const element = event.currentTarget as HTMLElement;
-
-    // If element is a link in 'both' mode, don't prevent default
-    // but still show modal
-    if (element instanceof HTMLAnchorElement && this.config.behavior === 'both') {
-      // Let the link work, but also show modal
-      this.activeElement = element;
-      this.onOpen(element, event);
-      return;
-    }
-
-    // For modal-only or if not a link, prevent default and show modal
-    if (this.config.behavior === 'modal-only' || !(element instanceof HTMLAnchorElement)) {
-      event.preventDefault();
-    }
-
-    // Toggle modal
     if (this.activeElement === element) {
-      this.onClose(element, event);
-      this.activeElement = null;
-    } else {
-      this.activeElement = element;
-      this.onOpen(element, event);
+      // Small delay to allow focus to move to modal
+      setTimeout(() => {
+        if (this.activeElement === element) {
+          this.onClose(element, event);
+          this.activeElement = null;
+        }
+      }, 200);
     }
   }
 

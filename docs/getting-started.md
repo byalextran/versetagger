@@ -137,7 +137,6 @@ const versetagger = new VerseTagger({
   proxyUrl: 'https://your-proxy.workers.dev',
 
   // Optional: Customize behavior
-  trigger: 'hover',        // Show modal on hover (default)
   colorScheme: 'auto',     // Auto-detect light/dark mode (default)
   defaultVersion: 'NIV',   // Default Bible translation (default)
   autoScan: true           // Automatically scan page on load (default)
@@ -175,24 +174,6 @@ VerseTagger will detect:
 - Abbreviations: `Matt 5:5`, `Gen 1:1`, `Ps 119:105`
 
 ## Customizing Behavior
-
-### Show Modals on Click Instead of Hover
-
-```javascript
-const versetagger = new VerseTagger({
-  proxyUrl: 'https://your-proxy.workers.dev',
-  trigger: 'click'  // User must click to see modal
-});
-```
-
-### Links Only (No Modals)
-
-```javascript
-const versetagger = new VerseTagger({
-  proxyUrl: 'https://your-proxy.workers.dev',
-  behavior: 'link-only'  // Just make clickable links
-});
-```
 
 ### Disable Auto-Scanning
 
