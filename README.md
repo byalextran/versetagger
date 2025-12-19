@@ -1,13 +1,13 @@
 # VerseTagger
 
-A lightweight, pure TypeScript library that automatically detects Bible references in web pages and displays verse content in elegant, customizable modals.
+VerseTagger is a TypeScript library that automatically detects scripture references on a webpage and provides interactive [bible.com](https://www.bible.com) previews via hover modals.
 
 ## Features
 
-- **Automatic Detection**: Scans your page for scripture references like "John 3:16", "Genesis 1:1-3", or "Psalm 23:1 NIV"
-- **Elegant Modals**: Displays verse content in beautiful, accessible modals on hover or click
-- **Highly Customizable**: Configure behavior, triggers, themes, and more
+- **Automatic Detection**: Scans your page for scripture references like John 3:16, Genesis 1:1-3, or Ps 23:1 NIV
+- **Elegant Modals**: Displays verse content in beautiful, accessible modals on hover
 - **Light & Dark Themes**: Built-in themes with automatic system preference detection
+- **Themeable**: Customize the look and feel of the modal to fit your site design
 - **Accessibility First**: WCAG 2.1 AA compliant with keyboard navigation and screen reader support
 - **Zero Dependencies**: No external dependencies in the core library
 - **TypeScript**: Full TypeScript support with type definitions included
@@ -27,6 +27,10 @@ npm install versetagger
 ```javascript
 import VerseTagger from 'versetagger';
 
+// Use the default proxy URL
+const versetagger = new VerseTagger();
+
+// Or use your own proxy server
 const versetagger = new VerseTagger({
   proxyUrl: 'https://your-proxy.workers.dev'
 });
@@ -37,17 +41,21 @@ const versetagger = new VerseTagger({
 ```html
 <script src="https://cdn.jsdelivr.net/npm/versetagger@latest/dist/versetagger.js"></script>
 <script>
+  // Use the default proxy URL
+  const versetagger = new VerseTagger();
+
+  // Or use your own proxy server
   const versetagger = new VerseTagger({
     proxyUrl: 'https://your-proxy.workers.dev'
   });
 </script>
 ```
 
-### 2. Set Up a Proxy Server
+### 2. Set Up a Proxy Server (Optional)
 
-VerseTagger requires a proxy server to securely communicate with the YouVersion API (to protect your API key). We provide a ready-to-deploy Cloudflare Worker example.
+VerseTagger uses a default proxy server at `https://versetagger.alextran.org` that securely communicates with the YouVersion API. You can use this default proxy to get started immediately.
 
-See [Cloudflare Proxy Setup Guide](./docs/cloudflare-proxy.md) for detailed instructions.
+If you prefer to host your own proxy server (recommended for production use), we provide a ready-to-deploy Cloudflare Worker example. See [Cloudflare Proxy Setup Guide](./docs/cloudflare-proxy.md) for detailed instructions.
 
 ### 3. Use It
 
@@ -68,7 +76,6 @@ VerseTagger will automatically detect these references and make them interactive
 
 ```javascript
 const versetagger = new VerseTagger({
-  proxyUrl: 'https://your-proxy.workers.dev',
   trigger: 'hover',        // Show modal on hover
   colorScheme: 'auto',     // Auto-detect light/dark mode
   defaultVersion: 'NIV'    // Default Bible version
@@ -80,7 +87,6 @@ const versetagger = new VerseTagger({
 ```javascript
 // Disable auto-scan
 const versetagger = new VerseTagger({
-  proxyUrl: 'https://your-proxy.workers.dev',
   autoScan: false
 });
 
@@ -110,7 +116,7 @@ VerseTagger is highly configurable. Here are some common options:
 
 ```javascript
 const versetagger = new VerseTagger({
-  // Required
+  // Proxy (optional - defaults to https://versetagger.alextran.org)
   proxyUrl: 'https://your-proxy.workers.dev',
 
   // Behavior
@@ -142,7 +148,6 @@ VerseTagger includes beautiful light and dark themes that automatically adapt to
 
 ```javascript
 const versetagger = new VerseTagger({
-  proxyUrl: 'https://your-proxy.workers.dev',
   theme: {
     colors: {
       modalBackground: '#ffffff',

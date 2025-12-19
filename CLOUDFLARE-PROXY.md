@@ -1,11 +1,13 @@
 # Cloudflare Worker Proxy for VerseTagger
 
-This Cloudflare Worker acts as a secure proxy between your website and the YouVersion API, protecting your API key from being exposed in client-side code.
+To protect my YouVersion API Key, this script uses a proxy at `https://versetagger.alextran.org`. This is done to protect my API key from misuse. 
+
+If you'd like to use your proxy and YouVersion API key, follow the instructions below. 
 
 ## Prerequisites
 
-1. **Cloudflare Account**: Sign up at [Cloudflare Workers](https://workers.cloudflare.com/)
-2. **YouVersion API Key**: Get one from [YouVersion Developers](https://developers.youversion.com/)
+1. **Cloudflare Account (free)**: Sign up at [Cloudflare Workers](https://workers.cloudflare.com/)
+2. **YouVersion API Key (free)**: Get one from [YouVersion Developers](https://developers.youversion.com/)
 3. **Wrangler CLI**: Install globally with `npm install -g wrangler`
 
 ## Setup Instructions

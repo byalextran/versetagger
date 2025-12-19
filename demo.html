@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VerseTagger - Comprehensive Demo</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    Oxygen, Ubuntu, sans-serif;
+                line-height: 1.6;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 2rem;
+                background: #f8f9fa;
+                color: #333;
+            }
+
+            h1 {
+                text-align: center;
+                color: #2c3e50;
+                margin-bottom: 0.5rem;
+            }
+
+            .subtitle {
+                text-align: center;
+                color: #7f8c8d;
+                margin-bottom: 0.5rem;
+            }
+
+            .default-translation {
+                text-align: center;
+                color: #27ae60;
+                font-weight: 600;
+                margin-bottom: 2rem;
+            }
+
+            section {
+                background: white;
+                border-radius: 8px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            h2 {
+                color: #27ae60;
+                border-bottom: 2px solid #27ae60;
+                padding-bottom: 0.5rem;
+                margin-top: 0;
+            }
+
+            h2.excluded {
+                color: #e74c3c;
+                border-bottom-color: #e74c3c;
+            }
+
+            h2.not-detected {
+                color: #f39c12;
+                border-bottom-color: #f39c12;
+            }
+
+            .example {
+                background: #ecf0f1;
+                padding: 1rem;
+                border-radius: 4px;
+                margin: 1rem 0;
+            }
+
+            .example-label {
+                font-size: 0.85rem;
+                color: #7f8c8d;
+                margin-bottom: 0.5rem;
+                font-weight: 600;
+            }
+
+            .example p {
+                margin: 0;
+            }
+
+            code {
+                background: #2c3e50;
+                color: #ecf0f1;
+                padding: 0.2rem 0.4rem;
+                border-radius: 3px;
+                font-size: 0.9rem;
+            }
+
+            pre {
+                background: #2c3e50;
+                color: #ecf0f1;
+                padding: 1rem;
+                border-radius: 4px;
+                overflow-x: auto;
+            }
+
+            .excluded-demo {
+                border-left: 4px solid #e74c3c;
+                padding-left: 1rem;
+            }
+
+            .legend {
+                display: flex;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                margin-bottom: 1rem;
+                padding: 1rem;
+                background: #f8f9fa;
+                border-radius: 4px;
+            }
+
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .legend-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+            }
+
+            .legend-dot.tagged {
+                background: #27ae60;
+            }
+
+            .legend-dot.excluded {
+                background: #e74c3c;
+            }
+
+            .legend-dot.not-detected {
+                background: #f39c12;
+            }
+
+            .inline-link {
+                color: #3498db;
+                text-decoration: underline;
+            }
+
+            footer {
+                text-align: center;
+                color: #7f8c8d;
+                font-size: 0.85rem;
+                margin-top: 2rem;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>VerseTagger Demo</h1>
+        <!-- SECTION: Full Book Names -->
+        <section>
+            <h2>Full Book Names</h2>
+            <div class="example">
+                <p>
+                    When life feels overwhelming, many find comfort in the
+                    familiar words of Psalm 23:1 which opens with "The Lord is
+                    my shepherd." This imagery of God as a caring shepherd has
+                    resonated with believers for thousands of years. The New
+                    Testament contains what is perhaps the most quoted verse in
+                    all of Scripture: John 3:16. It captures the essence of the
+                    gospel message in a single sentence. For those seeking
+                    practical wisdom, the book of 1 John 4:8 reminds us of a
+                    profound truth about God's nature.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION: Book Abbreviations -->
+        <section>
+            <h2>Book Abbreviations</h2>
+            <p>
+                Common abbreviations are automatically recognized. Only
+                abbreviations defined in
+                <a href="./src/parser/book-mappings.ts" class="inline-link"
+                    >src/parser/book-mappings.ts</a
+                >
+                are supported.
+            </p>
+
+            <div class="example">
+                <p>
+                    Bible study groups often begin with the opening words of Gen
+                    1:1 before diving into deeper theological discussions. When
+                    discussing faith, teachers frequently reference Heb 11:1 as
+                    a foundational definition. Paul's letters contain some of
+                    the most practical advice for daily living. His words in Rom
+                    8:28 have brought comfort to countless believers facing
+                    difficult circumstances.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION: Verse Ranges -->
+        <section>
+            <h2>Verse Ranges</h2>
+
+            <div class="example">
+                <p>
+                    Jesus delivered his most famous sermon on a mountainside,
+                    and the opening blessings found in Matthew 5:3-12 are known
+                    as the Beatitudes. These verses describe the characteristics
+                    of those who belong to God's kingdom. One of the most
+                    beloved passages in all of Scripture is Psalm 23:1-6, which
+                    paints a picture of God's tender care. In the prophetic
+                    writings, Isaiah 53:4-6 foretells the suffering servant who
+                    would bear the sins of many.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION: Translation Suffixes -->
+        <section>
+            <h2>Translation Suffixes</h2>
+            <p>
+                Specify a Bible version after the reference to override the
+                default (NIV).
+            </p>
+
+            <div class="example">
+                <p>
+                    Different translations can illuminate various aspects of a
+                    passage. The vivid imagery in Psalm 119:105 TPT brings a
+                    fresh perspective, while Psalm 119:105 NIV offers familiar
+                    and accessible phrasing. For those who appreciate more
+                    traditional language, Psalm 119:105 ASV preserves a classic
+                    rendering of the text.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION: Excluded Elements -->
+        <section>
+            <h2 class="excluded">Excluded Elements</h2>
+            <p>
+                By default, these elements (<code>code</code>, <code>pre</code>,
+                <code>script</code>, <code>style</code>, <code>head</code>,
+                <code>meta</code>, <code>title</code>, <code>link</code>,
+                <code>noscript</code>, <code>svg</code>, <code>canvas</code>,
+                <code>iframe</code>, <code>video</code>, <code>select</code>,
+                <code>option</code>, <code>button</code>, <code>a</code>) are
+                excluded from tagging.
+            </p>
+
+            <div class="example excluded-demo">
+                <div class="example-label">&lt;code&gt;</div>
+                <p>Inline code like <code>John 3:16</code> is not tagged.</p>
+            </div>
+
+            <div class="example excluded-demo">
+                <div class="example-label">&lt;pre&gt;</div>
+                <pre>
+// This code sample won't be tagged
+const verse = "Genesis 1:1";
+console.log("Reading: " + verse);</pre
+                >
+            </div>
+
+            <div class="example excluded-demo">
+                <div class="example-label">&lt;a&gt;</div>
+                <p>
+                    Verses that are already linked like
+                    <a href="#" class="inline-link">John 3:16</a>
+                    are excluded and left as-is.
+                </p>
+            </div>
+
+            <div class="example excluded-demo">
+                <div class="example-label">&lt;button&gt;</div>
+                <p>Buttons are excluded: <button>Read Matthew 5:1</button></p>
+            </div>
+        </section>
+
+        <!-- SECTION: Exclusion Class -->
+        <section>
+            <h2 class="excluded">Exclusion Class</h2>
+            <p>
+                Add the class <code>no-verse-tagging</code> to any element to
+                exclude it from tagging.
+            </p>
+
+            <div class="example excluded-demo">
+                <div class="example-label">Element With Class</div>
+                <p class="no-verse-tagging">
+                    This paragraph mentions John 3:16 and Romans 8:28 but they
+                    won't be tagged because the paragraph has the class applied.
+                </p>
+            </div>
+
+            <div class="example excluded-demo">
+                <div class="example-label">Children of Parent With Class</div>
+                <div class="no-verse-tagging">
+                    <p>
+                        Even nested content is excluded. Genesis 1:1 and Psalm
+                        23:1 won't be tagged here because it's parent has the
+                        class.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: Not Detected -->
+        <section>
+            <h2 class="not-detected">Not Detected (By Design)</h2>
+
+            <div class="example">
+                <div class="example-label">No Verse Reference</div>
+                <p>
+                    References like John 3 or Matthew 5 or Psalm 23 without a
+                    verse number are not tagged. The same goes with books like 1
+                    Peter.
+                </p>
+            </div>
+        </section>
+
+        <footer>
+            <p>VerseTagger - Automatic Scripture Reference Detection</p>
+            <p>
+                Hover over any green-highlighted reference to see the verse
+                text.
+            </p>
+        </footer>
+
+        <!-- Load VerseTagger from local dist -->
+        <script src="./dist/versetagger.js"></script>
+        <script>
+            // Initialize with all default options
+            const versetagger = new VerseTagger({});
+        </script>
+    </body>
+</html>
