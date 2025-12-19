@@ -1,299 +1,186 @@
 # VerseTagger
 
-VerseTagger is a TypeScript library that automatically detects scripture references on a webpage and provides interactive [bible.com](https://www.bible.com) previews via hover modals.
+VerseTagger is a TypeScript library that detects scripture references on a webpage and turns them into interactive links. No need to manually link them yourself. 
+
+[View Demo](./demo.html)
 
 ## Features
 
-- **Automatic Detection**: Scans your page for scripture references like John 3:16, Genesis 1:1-3, or Ps 23:1 NIV
-- **Elegant Modals**: Displays verse content in beautiful, accessible modals on hover
+- **Automatic Detection**: Scans your page for scripture references like John 3:16, Gen 1:1-3, or Psalm 23:1 NIV
+- **Elegant Modals**: Displays verse content in simple, elegant modals on hover
 - **Light & Dark Themes**: Built-in themes with automatic system preference detection
 - **Themeable**: Customize the look and feel of the modal to fit your site design
 - **Accessibility First**: WCAG 2.1 AA compliant with keyboard navigation and screen reader support
 - **Zero Dependencies**: No external dependencies in the core library
 - **TypeScript**: Full TypeScript support with type definitions included
-- **Tiny Bundle**: Less than 13KB gzipped
 - **Flexible Integration**: Works with any website or framework
 
 ## Quick Start
 
-### 1. Installation
-
-#### Via npm
-
-```bash
-npm install versetagger
-```
-
-```javascript
-import VerseTagger from 'versetagger';
-
-// Use the default proxy URL
-const versetagger = new VerseTagger();
-
-// Or use your own proxy server
-const versetagger = new VerseTagger({
-  proxyUrl: 'https://your-proxy.workers.dev'
-});
-```
-
-#### Via CDN
+Add this right before the `</body>` tag of any page you want VerseTagger to process. 
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/versetagger@latest/dist/versetagger.js"></script>
 <script>
-  // Use the default proxy URL
-  const versetagger = new VerseTagger();
-
-  // Or use your own proxy server
-  const versetagger = new VerseTagger({
-    proxyUrl: 'https://your-proxy.workers.dev'
-  });
+  // use default options
+  const versetagger = new VerseTagger({});
 </script>
 ```
 
-### 2. Set Up a Proxy Server (Optional)
+Once the page loads, any scripture references should automatically be tagged. 
 
-VerseTagger uses a default proxy server at `https://versetagger.alextran.org` that securely communicates with the YouVersion API. You can use this default proxy to get started immediately.
+## Configuration
 
-If you prefer to host your own proxy server (recommended for production use), we provide a ready-to-deploy Cloudflare Worker example. See [Cloudflare Proxy Setup Guide](./docs/cloudflare-proxy.md) for detailed instructions.
-
-### 3. Use It
-
-Add scripture references to your HTML:
-
-```html
-<p>
-  My favorite verse is John 3:16. I also love reading Psalm 23:1-6
-  and Romans 8:28-30 ESV.
-</p>
-```
-
-VerseTagger will automatically detect these references and make them interactive!
-
-## Basic Usage
-
-### Simple Configuration
+Below are all supported options with their default values. Specify only the values you want to override. 
 
 ```javascript
 const versetagger = new VerseTagger({
-  trigger: 'hover',        // Show modal on hover
-  colorScheme: 'auto',     // Auto-detect light/dark mode
-  defaultVersion: 'NIV'    // Default Bible version
+  // Proxy server URL (to protect the YouVersion API Key)
+  proxyUrl: 'https://versetagger.alextran.org',
+
+  // Delay before showing modal on hover (milliseconds)
+  hoverDelay: 500,
+
+  // Automatically scan DOM on initialization
+  autoScan: true,
+
+  // CSS selectors for elements to exclude from scanning
+  excludeSelectors: 'code, pre, script, style, head, meta, title, link, noscript, svg, canvas, iframe, video, select, option, button, a, .no-verse-tagging',
+
+  // Default Bible version
+  defaultVersion: 'NIV',
+
+  // Color scheme ('light', 'dark', or 'auto')
+  colorScheme: 'auto',
+
+  // Theme name or custom theme object (see Theming section below )
+  // If a custom theme is provided, the colorScheme setting will be ignored. 
+  theme: 'default',
+
+  accessibility: {
+    // Enable keyboard navigation
+    keyboardNav: true,
+
+    // Enable screen reader announcements
+    announceToScreenReaders: true
+  },
+
+  // CSS class added to tagged references
+  referenceClass: 'verse-reference',
+
+  // Open bible.com links in new tab
+  openLinksInNewTab: true,
+
+  // Enable debug logging
+  debug: false
 });
 ```
-
-### Manual Scanning
-
-```javascript
-// Disable auto-scan
-const versetagger = new VerseTagger({
-  autoScan: false
-});
-
-// Scan manually when ready
-versetagger.scan();
-
-// Or scan a specific element
-const article = document.querySelector('article');
-versetagger.scan(article);
-```
-
-### Dynamic Content
-
-```javascript
-// Re-scan after loading new content
-fetch('/api/article')
-  .then(response => response.text())
-  .then(html => {
-    document.querySelector('#content').innerHTML = html;
-    versetagger.rescan();
-  });
-```
-
-## Configuration Options
-
-VerseTagger is highly configurable. Here are some common options:
-
-```javascript
-const versetagger = new VerseTagger({
-  // Proxy (optional - defaults to https://versetagger.alextran.org)
-  proxyUrl: 'https://your-proxy.workers.dev',
-
-  // Behavior
-  behavior: 'both',           // 'link-only', 'modal-only', or 'both'
-  trigger: 'hover',            // 'hover', 'click', or 'both'
-  hoverDelay: 500,             // Delay before showing modal (ms)
-
-  // Appearance
-  colorScheme: 'auto',         // 'light', 'dark', or 'auto'
-  theme: 'default',            // Use preset theme or custom theme object
-
-  // Bible settings
-  defaultVersion: 'NIV',       // Default Bible translation
-
-  // Advanced
-  autoScan: true,              // Scan on page load
-  excludeSelectors: 'code, pre', // Elements to skip
-  debug: false                 // Enable debug logging
-});
-```
-
-See [Configuration Guide](./docs/configuration.md) for all available options.
 
 ## Theming
 
-VerseTagger includes beautiful light and dark themes that automatically adapt to your user's system preferences.
-
-### Custom Theme
+Below are all supported options with their default values. Specify only the values you want to override. 
 
 ```javascript
 const versetagger = new VerseTagger({
   theme: {
+    // Colors
     colors: {
+      // Modal container
       modalBackground: '#ffffff',
-      textPrimary: '#000000',
-      linkColor: '#0066cc',
-      // ... more colors
+      modalBorder: '#e5e7eb',
+      modalShadow: 'rgba(0, 0, 0, 0.1)',
+
+      // Text colors
+      textPrimary: '#111827',
+      textSecondary: '#374151',
+      textMuted: '#6b7280',
+
+      // Interactive elements
+      linkColor: '#2563eb',
+      linkHoverColor: '#1d4ed8',
+
+      // Verse numbers
+      verseNumberColor: '#9ca3af',
+
+      // Loading/error states
+      loadingColor: '#6b7280',
+      errorBackground: '#fef2f2',
+      errorText: '#dc2626',
+
+      // Close button
+      closeButtonColor: '#6b7280',
+      closeButtonHoverColor: '#111827',
+      closeButtonBackground: 'transparent',
+      closeButtonHoverBackground: '#f3f4f6'
     },
+
+    // Spacing
     spacing: {
-      modalPadding: '20px',
-      modalBorderRadius: '12px',
-      // ... more spacing
+      modalPadding: '16px',
+      modalBorderRadius: '8px',
+      modalMaxWidth: '400px',
+      versePadding: '8px 0',
+      verseGap: '4px'
     },
+
+    // Fonts
     fonts: {
-      fontFamily: 'Georgia, serif',
-      fontSize: '16px',
-      // ... more fonts
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      fontSize: '14px',
+      lineHeight: '1.6',
+      verseNumberSize: '12px'
     }
   }
 });
 ```
 
-### Change Theme at Runtime
+## Cloudflare Worker Proxy
 
-```javascript
-// Switch to dark theme
-versetagger.setTheme('dark');
+By default this script uses a proxy at `https://versetagger.alextran.org` to protect my YouVersion API key from misuse. 
 
-// Apply custom theme
-versetagger.setTheme({
-  colors: { modalBackground: '#f5f5f5' }
-});
-```
+If you'd like to use your own proxy and YouVersion API key, follow the instructions below. 
 
-See [Theming Guide](./docs/theming.md) for complete theme customization.
+### Prerequisites
 
-## API Reference
+1. **Cloudflare Account (free)**: Sign up at [Cloudflare Workers](https://workers.cloudflare.com/)
+2. **YouVersion API Key (free)**: Register as a [YouVersion Platform](https://platform.youversion.com/) Developer and create an application
+3. **Wrangler CLI**: Install globally with `npm install -g wrangler`
 
-### Constructor
+### Setup Instructions
 
-```javascript
-new VerseTagger(config: VersetaggerConfig)
-```
-
-### Methods
-
-- `scan(element?: HTMLElement)` - Scan page or specific element for references
-- `rescan()` - Clear and re-scan entire page
-- `updateConfig(config)` - Update configuration dynamically
-- `setTheme(theme)` - Change theme at runtime
-- `destroy()` - Cleanup listeners and remove modals
-- `getConfig()` - Get current configuration
-- `getScannedReferences()` - Get all scanned references
-- `getCacheStats()` - Get cache statistics
-- `clearCache()` - Clear verse cache
-
-See [API Reference](./docs/api-reference.md) for detailed documentation.
-
-## Browser Support
-
-VerseTagger supports all modern browsers:
-
-- Chrome (last 2 versions)
-- Firefox (last 2 versions)
-- Safari (last 2 versions)
-- Edge (last 2 versions)
-- Mobile Safari and Chrome Android
-
-Requires ES2017+ support.
-
-## Cloudflare Workers Support
-
-VerseTagger includes built-in support for deploying to Cloudflare Workers directly from the project root. The worker acts as a secure proxy between your website and the YouVersion API.
-
-### Quick Deploy
+#### 1. Clone this repo
 
 ```bash
-# Authenticate with Cloudflare
+git clone https://github.com/byalextran/versetagger.git
+cd versetagger
+```
+
+#### 2. Authenticate with Cloudflare
+
+```bash
 wrangler login
-
-# Set your YouVersion API key
-wrangler secret put YOUVERSION_API_KEY
-
-# Deploy the worker
-npm run worker:deploy
+# Follow the link/instructions to authenticate
 ```
 
-### Development
+#### 3. Deploy the worker to production
 
 ```bash
-# Test locally
-npm run worker:dev
-
-# View live logs
-npm run worker:tail
+wrangler deploy
 ```
 
-See [Cloudflare Proxy Setup Guide](./docs/cloudflare-proxy.md) for complete instructions.
+#### 4. Set your YouVersion API key
 
-## Examples
+```bash
+wrangler secret put YOUVERSION_API_KEY
+# Enter your API key when prompted
+```
 
-- [Basic Usage](./examples/basic.html) - Simple integration example
-- [Custom Theme](./examples/custom-theme.html) - Custom theme example
+#### 5. Test the deployment
 
-## Documentation
+After deployment, you'll get a URL like: `https://versetagger-proxy.your-subdomain.workers.dev`.
 
-- [Getting Started](./docs/getting-started.md) - Detailed setup guide
-- [Configuration](./docs/configuration.md) - All configuration options
-- [Theming](./docs/theming.md) - Theme customization guide
-- [API Reference](./docs/api-reference.md) - Complete API documentation
-- [Cloudflare Proxy Setup](./docs/cloudflare-proxy.md) - Proxy server setup
+Visit that URL and you should see output similar to this:
 
-## Performance
-
-- Bundle size: ~13KB gzipped (UMD), ~12KB gzipped (ESM)
-- Time to interactive: <100ms after DOMContentLoaded
-- Modal open latency: <300ms (cached), <1s (network)
-- Efficient caching with minimal memory footprint
-
-## Security
-
-VerseTagger takes security seriously:
-
-- **XSS Prevention**: All API responses are sanitized
-- **CSP Compatible**: No inline scripts or eval()
-- **API Key Protection**: Requires server-side proxy (keys never exposed client-side)
-- **Safe HTML**: Whitelist-based sanitization for verse content
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT License - see [LICENSE](./LICENSE) file for details.
-
-## Credits
-
-- Verse content provided by [YouVersion](https://www.youversion.com/)
-- Built with TypeScript and esbuild
-
-## Support
-
-- [Documentation](./docs/)
-- [GitHub Issues](https://github.com/yourusername/versetagger/issues)
-- [Examples](./examples/)
-
----
-
-Made with care for the web development community.
+```json
+{"error":"Missing required parameters: book, chapter, and verses are required"}
+```
