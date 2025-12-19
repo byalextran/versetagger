@@ -7,10 +7,11 @@ export type ColorScheme = 'light' | 'dark' | 'auto';
 
 export interface VersetaggerConfig {
   /**
-   * Required: URL of the proxy server that forwards requests to YouVersion API
+   * URL of the proxy server that forwards requests to YouVersion API
+   * @default 'https://versetagger.alextran.org'
    * Example: "https://your-worker.workers.dev/api/verses"
    */
-  proxyUrl: string;
+  proxyUrl?: string;
 
   /**
    * Delay in milliseconds before showing modal on hover
@@ -91,7 +92,7 @@ export interface VersetaggerConfig {
  * Default configuration values
  */
 export const DEFAULT_CONFIG: Required<VersetaggerConfig> = {
-  proxyUrl: '', // Required, no default
+  proxyUrl: 'https://versetagger.alextran.org', // Default proxy URL
   hoverDelay: 500,
   autoScan: true,
   excludeSelectors: 'code, pre, script, style, head, meta, title, link, noscript, svg, canvas, iframe, video, select, option, button, a, .no-verse-tagging',
@@ -126,19 +127,13 @@ export function mergeConfig(userConfig: VersetaggerConfig): Required<Versetagger
  * Throws error if configuration is invalid
  */
 export function validateConfig(config: VersetaggerConfig): void {
-  // Required fields
-  if (!config.proxyUrl) {
-    throw new Error(
-      'VerseTagger: proxyUrl is required. Please provide a URL to your API proxy server. ' +
-      'See documentation for proxy setup: https://github.com/yourusername/versetagger#proxy-setup'
-    );
-  }
-
-  // Validate URL format
-  try {
-    new URL(config.proxyUrl);
-  } catch {
-    throw new Error(`VerseTagger: Invalid proxyUrl "${config.proxyUrl}". Must be a valid URL.`);
+  // Validate URL format if provided
+  if (config.proxyUrl) {
+    try {
+      new URL(config.proxyUrl);
+    } catch {
+      throw new Error(`VerseTagger: Invalid proxyUrl "${config.proxyUrl}". Must be a valid URL.`);
+    }
   }
 
   // Validate color scheme
