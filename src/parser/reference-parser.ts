@@ -125,7 +125,7 @@ export function containsReferences(text: string): boolean {
  *   formatReference({ book: "MAT", chapter: 5, verses: [1,2,3] }) => "Matthew 5:1-3"
  */
 export function formatReference(ref: Partial<ScriptureReference>): string {
-  if (!ref.book || !ref.chapter) {
+  if (!ref.book) {
     return '';
   }
 
@@ -133,12 +133,15 @@ export function formatReference(ref: Partial<ScriptureReference>): string {
   const book = findBook(ref.book);
   const bookName = book ? book.name : ref.book;
 
+  // Handle partial reference (book only)
+  if (!ref.chapter) {
+    return bookName;
+  }
+
   let result = `${bookName} ${ref.chapter}`;
 
   if (ref.verses && ref.verses.length > 0) {
-    // Use the range formatter for compact display
-    const verseStr = formatVerseRangeCompact(ref.verses);
-    result += `:${verseStr}`;
+    result += `:${ref.verses}`;
   }
 
   if (ref.version) {
@@ -149,45 +152,10 @@ export function formatReference(ref: Partial<ScriptureReference>): string {
 }
 
 /**
- * Helper to format verses compactly
- */
-function formatVerseRangeCompact(verses: number[]): string {
-  if (verses.length === 0) return '';
-  if (verses.length === 1) return verses[0].toString();
-
-  const sorted = [...verses].sort((a, b) => a - b);
-  const ranges: string[] = [];
-  let rangeStart = sorted[0];
-  let rangeEnd = sorted[0];
-
-  for (let i = 1; i < sorted.length; i++) {
-    if (sorted[i] === rangeEnd + 1) {
-      rangeEnd = sorted[i];
-    } else {
-      if (rangeStart === rangeEnd) {
-        ranges.push(rangeStart.toString());
-      } else {
-        ranges.push(`${rangeStart}-${rangeEnd}`);
-      }
-      rangeStart = sorted[i];
-      rangeEnd = sorted[i];
-    }
-  }
-
-  if (rangeStart === rangeEnd) {
-    ranges.push(rangeStart.toString());
-  } else {
-    ranges.push(`${rangeStart}-${rangeEnd}`);
-  }
-
-  return ranges.join(',');
-}
-
-/**
  * Validate that a reference is well-formed
  */
 export function isValidReference(ref: Partial<ScriptureReference>): boolean {
-  if (!ref.book || !ref.chapter) {
+  if (!ref || !ref.book || !ref.chapter) {
     return false;
   }
 
@@ -200,7 +168,8 @@ export function isValidReference(ref: Partial<ScriptureReference>): boolean {
     return false;
   }
 
-  if (ref.verses && ref.verses.some(v => v <= 0)) {
+  // Verses are required for a complete reference
+  if (!ref.verses) {
     return false;
   }
 

@@ -19,17 +19,17 @@ describe('BIBLE_VERSIONS', () => {
     });
   });
 
-  it('should have all versions with name', () => {
+  it('should have all versions with title', () => {
     BIBLE_VERSIONS.forEach(version => {
-      expect(version.name).toBeTruthy();
-      expect(typeof version.name).toBe('string');
+      expect(version.title).toBeTruthy();
+      expect(typeof version.title).toBe('string');
     });
   });
 
   it('should have all versions with YouVersion ID', () => {
     BIBLE_VERSIONS.forEach(version => {
-      expect(version.youversionId).toBeTruthy();
-      expect(typeof version.youversionId).toBe('number');
+      expect(version.id).toBeTruthy();
+      expect(typeof version.id).toBe('number');
     });
   });
 
@@ -40,7 +40,7 @@ describe('BIBLE_VERSIONS', () => {
   });
 
   it('should have unique YouVersion IDs', () => {
-    const ids = BIBLE_VERSIONS.map(v => v.youversionId);
+    const ids = BIBLE_VERSIONS.map(v => v.id);
     const uniqueIds = new Set(ids);
     expect(ids.length).toBe(uniqueIds.size);
   });
@@ -48,49 +48,49 @@ describe('BIBLE_VERSIONS', () => {
   it('should include NIV', () => {
     const niv = BIBLE_VERSIONS.find(v => v.abbreviation === 'NIV');
     expect(niv).toBeDefined();
-    expect(niv?.name).toContain('International');
+    expect(niv?.title).toContain('International');
   });
 
   it('should include ESV', () => {
     const esv = BIBLE_VERSIONS.find(v => v.abbreviation === 'ESV');
     expect(esv).toBeDefined();
-    expect(esv?.name).toContain('Standard');
+    expect(esv?.title).toContain('Standard');
   });
 
   it('should include KJV', () => {
     const kjv = BIBLE_VERSIONS.find(v => v.abbreviation === 'KJV');
     expect(kjv).toBeDefined();
-    expect(kjv?.name).toContain('King James');
+    expect(kjv?.title).toContain('King James');
   });
 
   it('should include NASB', () => {
     const nasb = BIBLE_VERSIONS.find(v => v.abbreviation === 'NASB');
     expect(nasb).toBeDefined();
-    expect(nasb?.name).toContain('American Standard');
+    expect(nasb?.title).toContain('American Standard');
   });
 
   it('should include NLT', () => {
     const nlt = BIBLE_VERSIONS.find(v => v.abbreviation === 'NLT');
     expect(nlt).toBeDefined();
-    expect(nlt?.name).toContain('Living');
+    expect(nlt?.title).toContain('Living');
   });
 
   it('should include CSB', () => {
     const csb = BIBLE_VERSIONS.find(v => v.abbreviation === 'CSB');
     expect(csb).toBeDefined();
-    expect(csb?.name).toContain('Standard');
+    expect(csb?.title).toContain('Standard');
   });
 
   it('should include NKJV', () => {
     const nkjv = BIBLE_VERSIONS.find(v => v.abbreviation === 'NKJV');
     expect(nkjv).toBeDefined();
-    expect(nkjv?.name).toContain('King James');
+    expect(nkjv?.title).toContain('King James');
   });
 
   it('should include AMP', () => {
     const amp = BIBLE_VERSIONS.find(v => v.abbreviation === 'AMP');
     expect(amp).toBeDefined();
-    expect(amp?.name).toContain('Amplified');
+    expect(amp?.title).toContain('Amplified');
   });
 
   it('should have licensed property for each version', () => {
@@ -117,7 +117,7 @@ describe('BIBLE_VERSIONS', () => {
 
   it('should have positive YouVersion IDs', () => {
     BIBLE_VERSIONS.forEach(version => {
-      expect(version.youversionId).toBeGreaterThan(0);
+      expect(version.id).toBeGreaterThan(0);
     });
   });
 
@@ -316,7 +316,7 @@ describe('findVersion', () => {
 
     it('should return correct YouVersion ID', () => {
       const version = findVersion('NIV');
-      expect(version?.youversionId).toBeGreaterThan(0);
+      expect(version?.id).toBeGreaterThan(0);
     });
 
     it('should return correct license status', () => {
@@ -430,8 +430,8 @@ describe('BibleVersion interface compliance', () => {
   it('should have all required properties', () => {
     BIBLE_VERSIONS.forEach(version => {
       expect(version).toHaveProperty('abbreviation');
-      expect(version).toHaveProperty('name');
-      expect(version).toHaveProperty('youversionId');
+      expect(version).toHaveProperty('title');
+      expect(version).toHaveProperty('id');
       expect(version).toHaveProperty('licensed');
     });
   });
@@ -439,8 +439,8 @@ describe('BibleVersion interface compliance', () => {
   it('should have correct property types', () => {
     BIBLE_VERSIONS.forEach(version => {
       expect(typeof version.abbreviation).toBe('string');
-      expect(typeof version.name).toBe('string');
-      expect(typeof version.youversionId).toBe('number');
+      expect(typeof version.title).toBe('string');
+      expect(typeof version.id).toBe('number');
       expect(typeof version.licensed).toBe('boolean');
     });
   });

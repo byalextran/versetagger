@@ -88,8 +88,8 @@ export function formatVerseRange(verses: number[]): string {
   if (verses.length === 0) return '';
   if (verses.length === 1) return verses[0].toString();
 
-  // Sort verses
-  const sorted = [...verses].sort((a, b) => a - b);
+  // Sort verses and remove duplicates
+  const sorted = [...new Set(verses)].sort((a, b) => a - b);
 
   const ranges: string[] = [];
   let rangeStart = sorted[0];

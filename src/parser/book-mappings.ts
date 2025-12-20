@@ -144,7 +144,7 @@ export const BOOK_MAPPINGS: BookMapping[] = [
     code: 'PSA',
     testament: 'OT',
     abbreviations: ['Ps'],
-    alternateNames: []
+    alternateNames: ['Psalms']
   },
   {
     name: 'Proverbs',
@@ -165,7 +165,7 @@ export const BOOK_MAPPINGS: BookMapping[] = [
     code: 'SNG',
     testament: 'OT',
     abbreviations: ['Song'],
-    alternateNames: []
+    alternateNames: ['Song of Songs']
   },
   {
     name: 'Isaiah',

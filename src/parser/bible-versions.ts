@@ -552,7 +552,7 @@ const versionLookup = buildVersionLookup();
  * Find a Bible version by abbreviation (case-insensitive)
  */
 export function findVersion(abbreviation: string): BibleVersion | undefined {
-  return versionLookup.get(abbreviation.toUpperCase());
+  return versionLookup.get(abbreviation.trim().toUpperCase());
 }
 
 /**
