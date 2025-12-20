@@ -127,14 +127,11 @@ describe('DOM Scanner - Exclusions', () => {
       expect(getVerseLinks(element)[0].textContent).toBe('John 3:16');
     });
 
-    it.skip('should not scan <svg> elements (JSDOM limitation)', () => {
-      // Note: JSDOM has limitations with SVG namespace handling
-      // This test is skipped as JSDOM doesn't properly exclude SVG elements created via innerHTML
-      // The scanner correctly excludes SVG in real browsers
+    it('should not scan <svg> elements', () => {
       const element = createTestElement(`
         <div>
           <p>John 3:16 outside</p>
-          <svg>Romans 8:28 inside svg</svg>
+          <svg xmlns="http://www.w3.org/2000/svg"><text>Romans 8:28 inside svg</text></svg>
         </div>
       `);
       scanner.scan(element);

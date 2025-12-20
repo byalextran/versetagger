@@ -154,7 +154,8 @@ export class DOMScanner {
       // Optimized: Check Sets first (O(1)), then fall back to matches() for complex selectors
 
       // Fast path: Check tag name
-      if (this.excludedTags.has(element.tagName)) {
+      // Note: HTML elements have uppercase tagNames, but SVG/XML elements have lowercase tagNames
+      if (this.excludedTags.has(element.tagName) || this.excludedTags.has(element.tagName.toUpperCase())) {
         if (this.config.debug) {
           console.log(`${debugPrefix} REJECT - Element tag excluded: <${element.tagName.toLowerCase()}>`);
         }
