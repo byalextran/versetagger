@@ -1,18 +1,20 @@
 import { beforeAll, afterEach } from 'vitest';
-import { cleanup } from '@testing-library/dom';
 
 // Set up JSDOM globals
 beforeAll(() => {
   // Extend JSDOM with any needed globals
-  global.ResizeObserver = class ResizeObserver {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-  };
+  if (typeof global.ResizeObserver === 'undefined') {
+    global.ResizeObserver = class ResizeObserver {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    };
+  }
 });
 
-// Clean up DOM after each test
+// Clean up DOM after each test (for integration tests)
 afterEach(() => {
-  cleanup();
-  document.body.innerHTML = '';
+  if (typeof document !== 'undefined' && document.body) {
+    document.body.innerHTML = '';
+  }
 });
