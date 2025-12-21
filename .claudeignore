@@ -1,0 +1,9 @@
+# Generated files
+coverage/
+node_modules/
+*.log
+
+# Test fixtures and snapshots (keep actual test files searchable)
+tests/**/__snapshots__/
+tests/**/fixtures/
+tests/**/*.fixture.*
