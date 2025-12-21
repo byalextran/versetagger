@@ -1,8 +1,12 @@
 # VerseTagger
 
-VerseTagger is a TypeScript library that detects scripture references on a webpage and turns them into interactive links. No need to manually link them yourself. 
+If your website references scripture, you face a choice: manually link every verse (tedious) or skip it (less helpful for readers). VerseTagger removes the tradeoff. It automatically detects Bible references and makes them interactive. Readers hover over "Romans 8:28" and see the full text instantly.
 
-[View Demo](https://byalextran.github.io/versetagger/demo.html)
+Installation takes less than 30 seconds. Two lines of code.
+
+[View Live Demo](https://byalextran.github.io/versetagger/demo.html)
+
+![Before and after VerseTagger](https://byalextran.github.io/versetagger/assets/before-after.gif)
 
 ## Features
 
@@ -15,19 +19,25 @@ VerseTagger is a TypeScript library that detects scripture references on a webpa
 - **TypeScript**: Full TypeScript support with type definitions included
 - **Flexible Integration**: Works with any website or framework
 
+## Before Implementing
+
+1. This library depends on the [YouVersion API](https://developers.youversion.com/overview) which is in [public beta](https://platform.youversion.com/support). During this period, API updates may occur that could impact the functionality of this library.
+2. For now, I consider this a proof-of-concept project. Before implementing on a live site, please test thoroughly first. [Submit an issue](https://github.com/byalextran/versetagger/issues) if you:
+      - Run into any challenges
+      - Have questions
+      - Go live (I'd love to know!)
+3. Not all Bible versions are licensed for use. [See how VerseTagger handles them](https://byalextran.github.io/versetagger/demo.html#unlicensed).
+
 ## Quick Start
 
 Add this right before the `</body>` tag of any page you want VerseTagger to process. 
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/byalextran/versetagger@main/dist/versetagger.js"></script>
-<script>
-  // use default options
-  const versetagger = new VerseTagger({});
-</script>
+<script src="https://cdn.jsdelivr.net/npm/versetagger@1.0.0/dist/versetagger.js"></script>
+<script>const versetagger = new VerseTagger({});</script>
 ```
 
-Once the page loads, any scripture references should automatically be tagged. 
+Once the page loads, any scripture references should be tagged automatically. 
 
 ## Configuration
 

@@ -1,7 +1,7 @@
 {
   "name": "versetagger",
   "version": "1.0.0",
-  "description": "VerseTagger is a TypeScript library that automatically detects scripture references on a webpage and provides interactive bible.com previews via hover modals.",
+  "description": "VerseTagger saves time by automatically linking verses on your website. Readers hover over references like \"Romans 8:28\" to see the full text instantly.",
   "main": "dist/versetagger.js",
   "module": "dist/versetagger.esm.js",
   "types": "dist/index.d.ts",
