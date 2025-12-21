@@ -1,6 +1,6 @@
 {
   "name": "versetagger",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "VerseTagger saves time by automatically linking verses on your website. Readers hover over references like \"Romans 8:28\" to see the full text instantly.",
   "main": "dist/versetagger.js",
   "module": "dist/versetagger.esm.js",

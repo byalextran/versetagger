@@ -33,7 +33,7 @@ Installation takes less than 30 seconds. Two lines of code.
 Add this right before the `</body>` tag of any page you want VerseTagger to process. 
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/versetagger@1.0.0/dist/versetagger.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/versetagger@1.0.1/dist/versetagger.js"></script>
 <script>const versetagger = new VerseTagger({});</script>
 ```
 
