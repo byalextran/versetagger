@@ -243,12 +243,17 @@
 
         <!-- SECTION: Unlicensed Translations -->
         <section>
-            <h2>Unlicensed Translations</h2>
+            <h2 id="unlicensed">Unlicensed Translations</h2>
             <p>
-                Some Bible versions have licensing restrictions and cannot
-                display verse text directly in the modal. When you hover over
-                these references, the modal will show a licensing message and
-                provide a link to read the passage on Bible.com instead.
+                Some Bible versions have licensing restrictions through the
+                YouVersion API and cannot display verse text directly in the
+                modal. To see which versions are licensed, look for
+                <code>licensed: true</code> in
+                <a
+                    href="https://github.com/byalextran/versetagger/blob/main/src/parser/bible-versions.ts"
+                    class="inline-link"
+                    >src/parser/bible-versions.ts</a
+                >.
             </p>
 
             <div class="example">
