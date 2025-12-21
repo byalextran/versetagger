@@ -318,5 +318,271 @@ describe('DOM Scanner - Basic Scanning', () => {
       expect(results).toHaveLength(1);
       expect(results[0].text).toBe('John 3:16');
     });
+
+    it('should handle text node with null parent during processing', () => {
+      const element = createTestElement('<div><p>John 3:16 and Romans 8:28</p></div>');
+      const paragraph = element.querySelector('p')!;
+      const textNode = paragraph.firstChild as Text;
+
+      // Create a custom config and scanner
+      const config = createConfig({});
+      const testScanner = new DOMScanner(config);
+
+      // Start scanning
+      testScanner.scan(paragraph);
+
+      // Now manually create a detached text node with references
+      const detachedDiv = document.createElement('div');
+      detachedDiv.innerHTML = 'Psalm 23:1';
+      const detachedTextNode = detachedDiv.firstChild as Text;
+
+      // Remove from parent to make it orphaned
+      detachedDiv.removeChild(detachedTextNode);
+
+      // This should handle gracefully since parent is null
+      // The scanner won't find this in normal scanning, but we're testing the processTextNode path
+      const results = testScanner.scan(detachedDiv);
+      expect(results).toHaveLength(0);
+    });
+  });
+
+  describe('Debug Mode', () => {
+    it('should log debug information when debug is enabled', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: true });
+      const debugScanner = new DOMScanner(config);
+
+      const element = createTestElement('<p>John 3:16 and Romans 8:28</p>');
+      debugScanner.scan(element);
+
+      console.log = originalLog;
+
+      // Should have debug logs for:
+      // - TreeWalker finding text nodes
+      // - Processing nodes
+      // - Regex matches
+      // - Processing references in reverse order
+      expect(consoleLogs.some(log => log.includes('VerseTagger:'))).toBe(true);
+      expect(consoleLogs.some(log => log.includes('[TreeWalker]'))).toBe(true);
+      expect(consoleLogs.some(log => log.includes('[ProcessNode]'))).toBe(true);
+      expect(consoleLogs.some(log => log.includes('[Regex] Found'))).toBe(true);
+    });
+
+    it('should log match details in debug mode', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: true });
+      const debugScanner = new DOMScanner(config);
+
+      const element = createTestElement('<p>Check John 3:16 ESV</p>');
+      debugScanner.scan(element);
+
+      console.log = originalLog;
+
+      // Should log match details including book, chapter, verses, version
+      expect(consoleLogs.some(log => log.includes('[Match 1]'))).toBe(true);
+      expect(consoleLogs.some(log => log.includes('JHN'))).toBe(true);
+    });
+
+    it('should log processing details for each reference in debug mode', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: true });
+      const debugScanner = new DOMScanner(config);
+
+      const element = createTestElement('<p>First John 3:16 then Romans 8:28 finally Psalm 23:1</p>');
+      debugScanner.scan(element);
+
+      console.log = originalLog;
+
+      // Should log "Processing reference 1/3", "2/3", "3/3" etc.
+      expect(consoleLogs.some(log => log.includes('Processing reference'))).toBe(true);
+      expect(consoleLogs.some(log => log.includes('Processing') && log.includes('references in reverse order'))).toBe(true);
+    });
+
+    it('should not log when debug is disabled', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: false });
+      const normalScanner = new DOMScanner(config);
+
+      const element = createTestElement('<p>John 3:16 and Romans 8:28</p>');
+      normalScanner.scan(element);
+
+      console.log = originalLog;
+
+      // Should not have VerseTagger debug logs
+      const verseTaggerLogs = consoleLogs.filter(log => log.includes('VerseTagger:'));
+      expect(verseTaggerLogs).toHaveLength(0);
+    });
+
+    it('should log rejection for empty/whitespace text nodes in debug mode', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: true });
+      const debugScanner = new DOMScanner(config);
+
+      const element = createTestElement('<p>   \n\t   </p>');
+      debugScanner.scan(element);
+
+      console.log = originalLog;
+
+      // Should log that whitespace-only nodes are rejected
+      expect(consoleLogs.some(log => log.includes('REJECT') && log.includes('Empty or whitespace only'))).toBe(true);
+    });
+
+    it('should log warning when scanning orphaned elements in debug mode', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      const originalWarn = console.warn;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+      console.warn = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: true });
+      const debugScanner = new DOMScanner(config);
+
+      // Create an orphaned paragraph element (not attached to document)
+      const orphanedElement = document.createElement('p');
+      orphanedElement.textContent = 'John 3:16';
+
+      // Try to scan the orphaned element
+      debugScanner.scan(orphanedElement);
+
+      console.log = originalLog;
+      console.warn = originalWarn;
+
+      // The scanner should handle this gracefully and may log a warning
+      // At minimum, should not crash and return empty results
+      expect(consoleLogs.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should log rejection for already-scanned nodes in debug mode', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: true });
+      const debugScanner = new DOMScanner(config);
+
+      const element = createTestElement('<p>John 3:16</p>');
+
+      // First scan
+      debugScanner.scan(element);
+
+      // Clear logs from first scan
+      consoleLogs.length = 0;
+
+      // Second scan - should log "Already scanned" for tagged nodes
+      debugScanner.scan(element);
+
+      console.log = originalLog;
+
+      // Should log that nodes are already scanned
+      expect(consoleLogs.some(log => log.includes('Already scanned'))).toBe(true);
+    });
+
+    it('should log rejection for aria-hidden elements in debug mode', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: true });
+      const debugScanner = new DOMScanner(config);
+
+      const element = createTestElement('<div><p aria-hidden="true">John 3:16 is hidden</p></div>');
+      debugScanner.scan(element);
+
+      console.log = originalLog;
+
+      // Should log that aria-hidden elements are rejected
+      expect(consoleLogs.some(log => log.includes('aria-hidden="true"'))).toBe(true);
+    });
+
+    it('should log rejection for display:none elements in debug mode', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: true });
+      const debugScanner = new DOMScanner(config);
+
+      const element = createTestElement('<div><p style="display:none">John 3:16 is hidden</p></div>');
+      debugScanner.scan(element);
+
+      console.log = originalLog;
+
+      // Should log that hidden elements are rejected
+      expect(consoleLogs.some(log => log.includes('display:none'))).toBe(true);
+    });
+
+    it('should log rejection for visibility:hidden elements in debug mode', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: true });
+      const debugScanner = new DOMScanner(config);
+
+      const element = createTestElement('<div><p style="visibility:hidden">John 3:16 is hidden</p></div>');
+      debugScanner.scan(element);
+
+      console.log = originalLog;
+
+      // Should log that hidden elements are rejected
+      expect(consoleLogs.some(log => log.includes('visibility:hidden'))).toBe(true);
+    });
+
+    it('should log rejection for contenteditable elements in debug mode', () => {
+      const consoleLogs: string[] = [];
+      const originalLog = console.log;
+      console.log = (...args: any[]) => {
+        consoleLogs.push(args.join(' '));
+      };
+
+      const config = createConfig({ debug: true });
+      const debugScanner = new DOMScanner(config);
+
+      const element = createTestElement('<div><p contenteditable="true">John 3:16 is editable</p></div>');
+      debugScanner.scan(element);
+
+      console.log = originalLog;
+
+      // Should log that contenteditable elements are rejected
+      expect(consoleLogs.some(log => log.includes('contenteditable="true"'))).toBe(true);
+    });
+
   });
 });

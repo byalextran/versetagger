@@ -4,6 +4,7 @@ node_modules/
 .env
 *.tgz
 .context/
+coverage/
 
 # Cloudflare Workers
 .wrangler/

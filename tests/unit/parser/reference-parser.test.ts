@@ -192,6 +192,18 @@ describe('parseReferences', () => {
       expect(parseReferences('John 3:')).toHaveLength(0);
       expect(parseReferences('Romans :')).toHaveLength(0);
     });
+
+    it('should skip references with chapter 0', () => {
+      // These might match the regex pattern but should be filtered out
+      expect(parseReferences('John 0:16')).toHaveLength(0);
+      expect(parseReferences('Romans 0:1')).toHaveLength(0);
+    });
+
+    it('should skip references with negative chapters', () => {
+      // These might match pattern but should be filtered as invalid
+      expect(parseReferences('Genesis -1:1')).toHaveLength(0);
+      expect(parseReferences('Psalm -5:3')).toHaveLength(0);
+    });
   });
 
   describe('False Positive Prevention', () => {
@@ -382,6 +394,25 @@ describe('formatReference', () => {
     // Should handle gracefully even with missing data
     const result = formatReference(ref);
     expect(result).toContain('Psalm');
+  });
+
+  it('should return empty string when book is missing', () => {
+    const ref: Partial<ScriptureReference> = {
+      chapter: 3,
+      verses: '16'
+    };
+    expect(formatReference(ref)).toBe('');
+  });
+
+  it('should handle empty object', () => {
+    expect(formatReference({})).toBe('');
+  });
+
+  it('should handle reference with no chapter but has book', () => {
+    const ref: Partial<ScriptureReference> = {
+      book: 'JHN'
+    };
+    expect(formatReference(ref)).toBe('John');
   });
 });
 
