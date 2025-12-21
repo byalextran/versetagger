@@ -24,22 +24,10 @@ export interface BibleVersion {
  */
 export const BIBLE_VERSIONS: BibleVersion[] = [
   {
-    id: 4253,
-    abbreviation: 'AFV',
-    title: 'A Faithful Version',
-    licensed: false
-  },
-  {
     id: 1588,
     abbreviation: 'AMP',
     title: 'Amplified Bible',
     licensed: true
-  },
-  {
-    id: 8,
-    abbreviation: 'AMPC',
-    title: 'Amplified Bible, Classic Edition',
-    licensed: false
   },
   {
     id: 12,
@@ -48,16 +36,148 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     licensed: true
   },
   {
-    id: 31,
-    abbreviation: 'BOOKS',
-    title: 'The Books of the Bible NT',
-    licensed: false
-  },
-  {
     id: 3034,
     abbreviation: 'BSB',
     title: 'English: Berean Standard Bible',
     licensed: true
+  },
+  {
+    id: 42,
+    abbreviation: 'CPDV',
+    title: 'Catholic Public Domain Version',
+    licensed: true
+  },
+  {
+    id: 2079,
+    abbreviation: 'EASY',
+    title: 'EasyEnglish Bible 2024',
+    licensed: true
+  },
+  {
+    id: 1932,
+    abbreviation: 'FBV',
+    title: 'Free Bible Version',
+    licensed: true
+  },
+  {
+    id: 2163,
+    abbreviation: 'GNV',
+    title: 'Geneva Bible',
+    licensed: true
+  },
+  {
+    id: 2660,
+    abbreviation: 'LSV',
+    title: 'Literal Standard Version',
+    licensed: true
+  },
+  {
+    id: 100,
+    abbreviation: 'NASB',
+    title: 'New American Standard Bible - NASB 1995',
+    licensed: true
+  },
+  {
+    id: 2692,
+    abbreviation: 'NASB2020',
+    title: 'New American Standard Bible - NASB',
+    licensed: true
+  },
+  {
+    id: 110,
+    abbreviation: 'NIRV',
+    title: "New International Reader's Version",
+    licensed: true
+  },
+  {
+    id: 111,
+    abbreviation: 'NIV',
+    title: 'New International Version',
+    licensed: true
+  },
+  {
+    id: 113,
+    abbreviation: 'NIVUK',
+    title: 'New International Version (Anglicised)',
+    licensed: true
+  },
+  {
+    id: 4455,
+    abbreviation: 'NTBNBL2025',
+    title: 'Benamanga',
+    licensed: true
+  },
+  {
+    id: 2530,
+    abbreviation: 'PEV',
+    title: 'Plain English Version',
+    licensed: true
+  },
+  {
+    id: 3427,
+    abbreviation: 'TCENT',
+    title: 'The Text-Critical English New Testament',
+    licensed: true
+  },
+  {
+    id: 130,
+    abbreviation: 'TOJBT2011',
+    title: 'The Orthodox Jewish Bible',
+    licensed: true
+  },
+  {
+    id: 1849,
+    abbreviation: 'TPT',
+    title: 'The Passion Translation',
+    licensed: true
+  },
+  {
+    id: 4533,
+    abbreviation: 'WBTP',
+    title: 'Afā Wanyɛnyɛ wu Nugé Wàpyóò',
+    licensed: true
+  },
+  {
+    id: 1204,
+    abbreviation: 'WEBBE',
+    title: 'World English Bible British Edition',
+    licensed: true
+  },
+  {
+    id: 206,
+    abbreviation: 'WEBUS',
+    title: "World English Bible, American English Edition, without Strong's Numbers",
+    licensed: true
+  },
+  {
+    id: 1209,
+    abbreviation: 'WMB',
+    title: 'World Messianic Bible',
+    licensed: true
+  },
+  {
+    id: 1207,
+    abbreviation: 'WMBBE',
+    title: 'World Messianic Bible British Edition',
+    licensed: true
+  },
+  {
+    id: 4253,
+    abbreviation: 'AFV',
+    title: 'A Faithful Version',
+    licensed: false
+  },
+  {
+    id: 8,
+    abbreviation: 'AMPC',
+    title: 'Amplified Bible, Classic Edition',
+    licensed: false
+  },
+  {
+    id: 31,
+    abbreviation: 'BOOKS',
+    title: 'The Books of the Bible NT',
+    licensed: false
   },
   {
     id: 37,
@@ -90,12 +210,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     licensed: false
   },
   {
-    id: 42,
-    abbreviation: 'CPDV',
-    title: 'Catholic Public Domain Version',
-    licensed: true
-  },
-  {
     id: 1713,
     abbreviation: 'CSB',
     title: 'Christian Standard Bible',
@@ -120,12 +234,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     licensed: false
   },
   {
-    id: 2079,
-    abbreviation: 'EASY',
-    title: 'EasyEnglish Bible 2024',
-    licensed: true
-  },
-  {
     id: 4224,
     abbreviation: 'EHV',
     title: 'Evangelical Heritage Version - 2021',
@@ -142,12 +250,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     abbreviation: 'ESV',
     title: 'English Standard Version 2025',
     licensed: false
-  },
-  {
-    id: 1932,
-    abbreviation: 'FBV',
-    title: 'Free Bible Version',
-    licensed: true
   },
   {
     id: 3633,
@@ -184,12 +286,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     abbreviation: 'GNTD',
     title: 'Good News Translation (US Version)',
     licensed: false
-  },
-  {
-    id: 2163,
-    abbreviation: 'GNV',
-    title: 'Geneva Bible',
-    licensed: true
   },
   {
     id: 70,
@@ -252,12 +348,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     licensed: false
   },
   {
-    id: 2660,
-    abbreviation: 'LSV',
-    title: 'Literal Standard Version',
-    licensed: true
-  },
-  {
     id: 1171,
     abbreviation: 'MEV',
     title: 'Modern English Version',
@@ -300,18 +390,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     licensed: false
   },
   {
-    id: 100,
-    abbreviation: 'NASB',
-    title: 'New American Standard Bible - NASB 1995',
-    licensed: true
-  },
-  {
-    id: 2692,
-    abbreviation: 'NASB2020',
-    title: 'New American Standard Bible - NASB',
-    licensed: true
-  },
-  {
     id: 105,
     abbreviation: 'NCV',
     title: 'New Century Version',
@@ -322,24 +400,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     abbreviation: 'NET',
     title: 'New English Translation',
     licensed: false
-  },
-  {
-    id: 110,
-    abbreviation: 'NIRV',
-    title: "New International Reader's Version",
-    licensed: true
-  },
-  {
-    id: 111,
-    abbreviation: 'NIV',
-    title: 'New International Version',
-    licensed: true
-  },
-  {
-    id: 113,
-    abbreviation: 'NIVUK',
-    title: 'New International Version (Anglicised)',
-    licensed: true
   },
   {
     id: 114,
@@ -378,12 +438,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     licensed: false
   },
   {
-    id: 4455,
-    abbreviation: 'NTBNBL2025',
-    title: 'Benamanga',
-    licensed: true
-  },
-  {
     id: 3915,
     abbreviation: 'OYBCENGL',
     title: 'The third line (in English) translating the meaning of each word in the Orthodox Yiddish Brit Chadashah (New Testament)',
@@ -400,12 +454,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     abbreviation: 'OYTORHEG',
     title: 'Translation into English of Orthodox Yiddish Torah (OYTORAH)',
     licensed: false
-  },
-  {
-    id: 2530,
-    abbreviation: 'PEV',
-    title: 'Plain English Version',
-    licensed: true
   },
   {
     id: 2753,
@@ -444,12 +492,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     licensed: false
   },
   {
-    id: 3427,
-    abbreviation: 'TCENT',
-    title: 'The Text-Critical English New Testament',
-    licensed: true
-  },
-  {
     id: 3010,
     abbreviation: 'TEG',
     title: 'Isaiah 1830, 1842 (John Jones alias Ioan Tegid)',
@@ -462,18 +504,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     licensed: false
   },
   {
-    id: 130,
-    abbreviation: 'TOJB2011',
-    title: 'The Orthodox Jewish Bible',
-    licensed: true
-  },
-  {
-    id: 1849,
-    abbreviation: 'TPT',
-    title: 'The Passion Translation',
-    licensed: true
-  },
-  {
     id: 316,
     abbreviation: 'TS2009',
     title: 'The Scriptures 2009',
@@ -484,36 +514,6 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
     abbreviation: 'WBMS',
     title: "Wycliffe's Bible with Modern Spelling",
     licensed: false
-  },
-  {
-    id: 4533,
-    abbreviation: 'WBTP',
-    title: 'Afā Wanyɛnyɛ wu Nugé Wàpyóò',
-    licensed: true
-  },
-  {
-    id: 1204,
-    abbreviation: 'WEBBE',
-    title: 'World English Bible British Edition',
-    licensed: true
-  },
-  {
-    id: 206,
-    abbreviation: 'WEBUS',
-    title: "World English Bible, American English Edition, without Strong's Numbers",
-    licensed: true
-  },
-  {
-    id: 1209,
-    abbreviation: 'WMB',
-    title: 'World Messianic Bible',
-    licensed: true
-  },
-  {
-    id: 1207,
-    abbreviation: 'WMBBE',
-    title: 'World Messianic Bible British Edition',
-    licensed: true
   },
   {
     id: 4108,
