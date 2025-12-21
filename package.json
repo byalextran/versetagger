@@ -16,7 +16,10 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest watch"
+    "test:watch": "vitest watch",
+    "release:patch": "npm run build && npm version patch && npm publish && git push --follow-tags",
+    "release:minor": "npm run build && npm version minor && npm publish && git push --follow-tags",
+    "release:major": "npm run build && npm version major && npm publish && git push --follow-tags"
   },
   "keywords": [
     "bible",
