@@ -5,6 +5,7 @@ node_modules/
 *.tgz
 .context/
 coverage/
+dist/
 
 # Cloudflare Workers
 .wrangler/
